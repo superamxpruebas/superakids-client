@@ -1,13 +1,260 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+* {
+	box-sizing: border-box;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@600&display=swap");
+
+body {
+	min-height: 100vh;
+	display: flex;
+	font-weight: 400;
+	font-family: sans-serif;
+	background: #12c2e9; /* fallback for old browsers */
+	background: -webkit-linear-gradient(to right); /* Chrome 10-25, Safari 5.1-6 */
+	background: linear-gradient(
+		to right,
+		#12c2e9,
+		#fff /*00719b*/ /*#002d3d*/
+	); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+body,
+html,
+.App,
+#root,
+.outer {
+	width: 100%;
+	height: 100%;
+}
+
+.navbar-light {
+	background-color: #ffffff;
+	box-shadow: 0px 14px 80px rgba(34, 35, 58, 0.2);
+}
+
+.outer {
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	text-align: left;
+}
+
+.inner {
+	width: 450px;
+	margin: auto;
+	background: #ffffff;
+	box-shadow: 0px 14px 80px rgba(34, 35, 58, 0.2);
+	padding: 40px 55px 45px 55px;
+	border-radius: 15px;
+	transition: all 0.3s;
+}
+
+.outer .form-control:focus {
+	border-color: #167bff;
+	box-shadow: none;
+}
+
+.outer h3 {
+	text-align: center;
+	margin: 0;
+	line-height: 1;
+	padding-bottom: 20px;
+}
+
+.custom-control-label {
+	font-weight: 400;
+}
+
+/* App */
+
+.App {
+	text-align: center;
+}
+
+.App-logo {
+	height: 40vmin;
+}
+
+.App-header {
+	background-color: #282c34;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	font-size: calc(10px + 2vmin);
+	color: white;
+}
+
+.App-link {
+	color: #09d3ac;
+}
+
+/* ------ main ------ */
+
+main {
+	min-height: 80vh;
+}
+
+main h1 {
+	text-align: left;
+}
+
+/* ---------------- aqui empieza ------------------- */
+/* ---------------- SuperaKids Custom CSS ------------------- */
+
+/* ------ common use ------ */
+
+h1,
+h2,
+h3,
+p {
+	font-family: "Nunito", sans-serif;
+}
+
+.no-padding {
+	padding: 0px !important;
+}
+
+.rounded-image {
+	border-radius: 50% !important;
+	object-fit: cover;
+}
+
+.rounded-image-big {
+	max-width: 150px;
+	max-height: 150px;
+	min-width: 150px;
+	min-height: 150px;
+}
+
+.rounded-image-small {
+	max-width: 50px;
+	max-height: 50px;
+	min-width: 50px;
+	min-height: 50px;
+}
+
+/* ------ primereact overrides ------ */
+
+.p-inline-message .p-inline-message-text {
+	font-size: 0.7rem;
+}
+
+/*esto quita el overflow en modal y el scroll que hace, 
+aqui- a ver si no afecta otros checkboxes (fuera o adentro de modales)*/
+div.p-checkbox.p-component > div.p-hidden-accessible {
+	position: fixed;
+}
+
+.p-field,
+.p-field-checkbox > label {
+	font-size: 14px;
+}
+
+/* ------ footer and header ------ */
+
+header {
+	max-height: 10vh;
+}
+
+footer {
+	background: #4c5760;
+	color: whitesmoke;
+	min-height: 10vh;
+}
+
+/* ------ user selector (navbar, next to "cuenta") ------ */
+
+/*topbar dropdown div*/
+.dropdown-menu.show.dropdown-menu-right {
+	overflow-y: scroll;
+	overflow-x: hidden;
+	min-height: 326px;
+	max-height: 326px;
+	width: 377px;
+	max-width: 377px;
+}
+
+/*topbar dropdown div, span, textfield parent -> */
+.dropdown-item-text > span.p-input-icon-left {
+	width: 100%;
+	margin-bottom: 10px;
+}
+/*topbar dropdown div, anchors*/
+.dropdown-menu.show.dropdown-menu-right > button {
+	min-height: 60px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 100%;
+	overflow-x: hidden;
+	padding: 13px 0.5rem;
+}
+
+/*topbar dropdown (downward arrow) button  */
+#input-group-dropdown-2 {
+	min-width: 40px;
+	border-bottom-right-radius: 2rem;
+	border-top-right-radius: 2rem;
+}
+
+/*chips component, textfield -> fit parent container*/
+nav > div > div > form > div > div > ul {
+	width: 100%;
+}
+/*chips component, textfield, highlited text, span that has text -> hide rest of text when too large*/
+nav > div > div > form > div > div > ul > li > span.p-chips-token-label {
+	max-width: 242px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow-x: hidden;
+}
+
+/* keep navbar as row on breakpoint */
+@media (max-width: 992px) {
+	.navbar-nav {
+		flex-direction: row;
+	}
+}
+
+/* ------ AccountDetails component (sidebar and update modal) ------ */
+
+#AccountDetailsDiv {
+	overflow-y: auto;
+}
+
+/*center sidebar content when height is too large*/
+.p-sidebar-content {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	height: 100%;
+}
+/*fit sidebar content better when height is less than 700px*/
+@media (max-height: 700px) {
+	.p-sidebar-content {
+		padding-bottom: 40px;
+	}
+}
+
+/*handle overflow in tabpanes*/
+.scrollable-tab {
+	overflow-y: auto;
+	min-height: 50vh;
+	max-height: 50vh;
+	max-width: 100%;
+}
+
+/*getting rid of x overflow on modal*/
+div#therapistModalTabs-tabpane-update > div.p-grid {
+	margin-right: 0px;
+	margin-left: 0px;
+}
+
+/* --- SKModalBody --- */
+
+#SKModalBody {
+	overflow-y: auto;
+	min-height: 61vh;
+	max-height: 61vh;
 }
