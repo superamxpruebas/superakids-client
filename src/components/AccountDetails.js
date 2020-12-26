@@ -291,11 +291,6 @@ const AccountDetails = () => {
 				"El apellido materno debe tener una longitud de 1 a 25 caracteres."
 		};
 	}, []);
-	useEffect(() => {
-		return () => {
-			setImagePreviewSource(defaultImageWhenEmpty(loggedTherapist.photoUrl));
-		};
-	}, [loggedTherapist.photoUrl]);
 
 	// --- methods ---
 	const showPasswordMessage = (show) => {
@@ -365,6 +360,8 @@ const AccountDetails = () => {
 				style={{ marginBottom: "10px", width: "100%" }}
 				onClick={() => {
 					setShowModal(true);
+					//restore therapist image
+					setImagePreviewSource(defaultImageWhenEmpty(loggedTherapist.photoUrl));
 				}}
 			/>
 			<Button

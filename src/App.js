@@ -1,6 +1,5 @@
 import React from "react";
 import Login from "./screens/Login";
-import Pruebas from "./screens/Pruebas";
 import Dashboard from "./screens/Dashboard";
 import Users from "./screens/Users";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";

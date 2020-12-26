@@ -1,6 +1,7 @@
 import * as yup from "yup";
 
 /* get default validation values and messages from server */
+//aqui falta sacarlo de localsession
 var validationUtils = {
 	PROBLEM_TITLE_EMPTY: "El título del problema no puede estar vacío.",
 	ROLES_LIST_NOT_FOUND: "No se encontró el rol especificado.",
@@ -180,6 +181,20 @@ let dateRegex = new RegExp(validationUtils.DATE_PATTERN_REGEX);
 const emptyStringDefault = "";
 const emptyArray = [];
 const falseStringDefault = "false";
+const selectValue = "Seleccionar";
+
+/* ------------------ columns (view only) ------------------ */
+
+export const fullName = {
+	name: "fullName",
+	label: "Nombre Completo",
+	placeholder: "Nombre Completo"
+};
+export const yearsOld = {
+	name: "yearsOld",
+	label: "Edad",
+	placeholder: "Edad"
+};
 
 /* ------------------ fields ------------------ */
 
@@ -262,7 +277,7 @@ export const sex = {
 	name: "sex",
 	default: emptyStringDefault,
 	label: "Sexo",
-	placeholder: "Seleccionar",
+	placeholder: selectValue,
 	validation: yup
 		.string()
 		.default(emptyStringDefault)
@@ -507,4 +522,31 @@ export const description = {
 		.string()
 		.required(validationUtils.PROBLEM_DESC_EMPTY)
 		.max(validationUtils.PROBLEM_DESC_MAX, validationUtils.PROBLEM_DESC_TOOLONG)
+};
+
+//birthday textfield (date)
+export const birthday = {
+	name: "birthday",
+	default: emptyStringDefault,
+	label: "Fecha de Nacimiento",
+	placeholder: "Fecha de Nacimiento",
+	validation: yup
+		.string()
+		.default(emptyStringDefault)
+		.required(validationUtils.BIRTHDAY_EMPTY)
+		.matches(dateRegex, validationUtils.BIRTHDAY_INVALID)
+};
+
+//education select
+export const education = {
+	name: "education",
+	default: emptyStringDefault,
+	label: "Educación",
+	placeholder: selectValue,
+	validation: yup
+		.string()
+		.default(emptyStringDefault)
+		.required(validationUtils.EDUCAITON_EMPTY)
+		.max(validationUtils.EDUCATION_MAX_LENGTH, validationUtils.EDUCATION_TOOLONG)
+		.oneOf(validationUtils.EDUCATION_VALUES, validationUtils.EDUCATION_INVALID)
 };

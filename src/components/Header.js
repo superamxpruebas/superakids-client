@@ -99,7 +99,6 @@ const Header = () => {
 						<Navbar.Brand>
 							<img
 								alt="Logo"
-								//src="https://superakids-bucket.s3.us-east-2.amazonaws.com/logos/SuperaKidsLogo.png" aqui viendo
 								src={AppLogoUrl}
 								style={{
 									height: "50px"
