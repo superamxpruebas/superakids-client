@@ -18,3 +18,18 @@ export function stringArrayToPRSelectObjects(array) {
 export function defaultImageWhenEmpty(photoUrl) {
 	return photoUrl ? photoUrl : defaultAccountPhoto;
 }
+
+export function parseDate(dateString) {
+	let positions = dateString.split("/");
+	let day = parseInt(positions[0]);
+	let month = parseInt(positions[1]) - 1;
+	let year = parseInt(positions[2]);
+	return new Date(year, month, day);
+}
+
+export function dateToString(date) {
+	if (date == null) return "";
+	let day = ("0" + date.getDate()).slice(-2);
+	let month = ("0" + (date.getMonth() + 1)).slice(-2);
+	return `${day}/${month}/${date.getFullYear()}`;
+}

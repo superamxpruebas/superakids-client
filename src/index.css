@@ -135,6 +135,12 @@ p {
 	min-height: 50px;
 }
 
+.full-width {
+	width: 100%;
+	max-width: 100%;
+	min-width: 100%;
+}
+
 /* ------ primereact overrides ------ */
 
 .p-inline-message .p-inline-message-text {
@@ -354,4 +360,10 @@ div#therapistModalTabs-tabpane-update > div.p-grid {
 		.p-progressbar {
 		margin-top: 0.5rem;
 	}
+}
+
+/* ------- calendar --------- */
+
+.p-datepicker-calendar thead tr th {
+	text-align: center;
 }

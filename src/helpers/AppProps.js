@@ -25,7 +25,7 @@ export const Administracion = "Administracion";
 export const profileImageTextDefault = "Imagen actual";
 export const profileImageTextPreview = "Vista previa de imagen";
 export const defaultAccountPhoto =
-	"https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png";
+	"https://superakids-bucket.s3.us-east-2.amazonaws.com/defaults/img/defaultProfileImage.png";
 
 //default password values
 export const passwordRulesMessageObject = {
@@ -49,4 +49,48 @@ export const passwordRulesMessageObject = {
 			</div>
 		</>
 	)
+};
+
+//primereact calendar spanish translation
+export const spanishCalendarProps = {
+	firstDayOfWeek: 1,
+	dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+	dayNamesShort: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
+	dayNamesMin: ["D", "L", "M", "X", "J", "V", "S"],
+	monthNames: [
+		"Enero",
+		"Febrero",
+		"Marzo",
+		"Abril",
+		"Mayo",
+		"Junio",
+		"Julio",
+		"Agosto",
+		"Septiembre",
+		"Octubre",
+		"Noviembre",
+		"Diciembre"
+	],
+	monthNamesShort: [
+		"Ene",
+		"Feb",
+		"Mar",
+		"Abr",
+		"May",
+		"Jun",
+		"Jul",
+		"Ago",
+		"Sep",
+		"Oct",
+		"Nov",
+		"Dic"
+	],
+	today: "Hoy",
+	clear: "Limpiar"
+};
+
+//primereact calendar year range - 1960 - actual year
+export const currentYearRange = () => {
+	let year = new Date().getFullYear();
+	return `1960:${year}`;
 };

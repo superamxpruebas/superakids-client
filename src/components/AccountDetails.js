@@ -428,14 +428,14 @@ const AccountDetails = () => {
 												<hr />
 												<h6>Datos Personales y Credenciales</h6>
 											</div>
-											<div className="p-col-6 p-lg-3">
+											<div className="p-col-6">
 												<FormInput
 													inputName={firstName.name}
 													labelText={firstName.label}
 													placeholder={firstName.placeholder}
 												/>
 											</div>
-											<div className="p-col-6 p-lg-3">
+											<div className="p-col-6">
 												<FormInput
 													inputName={secondName.name}
 													labelText={secondName.label}
@@ -443,14 +443,14 @@ const AccountDetails = () => {
 													optionalField
 												/>
 											</div>
-											<div className="p-col-6 p-lg-3">
+											<div className="p-col-6">
 												<FormInput
 													inputName={paternalSurname.name}
 													labelText={paternalSurname.label}
 													placeholder={paternalSurname.placeholder}
 												/>
 											</div>
-											<div className="p-col-6 p-lg-3">
+											<div className="p-col-6">
 												<FormInput
 													inputName={maternalSurname.name}
 													labelText={maternalSurname.label}
