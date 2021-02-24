@@ -27,6 +27,9 @@ export const profileImageTextPreview = "Vista previa de imagen";
 export const defaultAccountPhoto =
 	"https://superakids-bucket.s3.us-east-2.amazonaws.com/defaults/img/defaultProfileImage.png";
 
+// title values for ImageUploader component
+export const imagePreviewTitleUsers = "Foto de Usuario";
+
 //default password values
 export const passwordRulesMessageObject = {
 	severity: "info",
@@ -88,9 +91,5 @@ export const spanishCalendarProps = {
 	today: "Hoy",
 	clear: "Limpiar"
 };
-
-//primereact calendar year range - 1960 - actual year
-export const currentYearRange = () => {
-	let year = new Date().getFullYear();
-	return `1960:${year}`;
-};
+//primereact calendar format
+export const formatCalendarProps = "dd/mm/yy";

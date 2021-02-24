@@ -144,7 +144,12 @@ p {
 /* ------ primereact overrides ------ */
 
 .p-inline-message .p-inline-message-text {
-	font-size: 0.7rem;
+	font-size: 0.9rem;
+}
+
+/*el componente de editor me agregaba un toolbar feo y esto lo esconde*/
+.p-editor-toolbar {
+	display: none;
 }
 
 /*esto quita el overflow en modal y el scroll que hace, 
@@ -156,6 +161,13 @@ div.p-checkbox.p-component > div.p-hidden-accessible {
 .p-field,
 .p-field-checkbox > label {
 	font-size: 14px;
+}
+
+/*react-quill editor*/
+.ql-editor {
+	min-height: 300px;
+	height: 300px;
+	max-height: 300px;
 }
 
 /* ------ footer and header ------ */
@@ -261,8 +273,8 @@ div#therapistModalTabs-tabpane-update > div.p-grid {
 
 #SKModalBody {
 	overflow-y: auto;
-	min-height: 61vh;
-	max-height: 61vh;
+	min-height: 80vh; /*aqui era 61*/
+	max-height: 80vh;
 }
 
 /* ------------------ data tables css ------------------ */

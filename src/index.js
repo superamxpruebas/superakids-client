@@ -3,12 +3,20 @@ import "primereact/resources/primereact.css";
 import "primeflex/primeflex.css";
 import "primereact/resources/themes/saga-blue/theme.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "react-quill/dist/quill.snow.css";
 
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+
+import TimeAgo from "javascript-time-ago";
+import es from "javascript-time-ago/locale/es";
+import en from "javascript-time-ago/locale/en";
+
+TimeAgo.addDefaultLocale(en);
+TimeAgo.addLocale(es);
 
 ReactDOM.render(
 	<React.StrictMode>

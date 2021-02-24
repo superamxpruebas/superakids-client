@@ -393,29 +393,20 @@ export const oldPassword = {
 //nextFollowup textfield (date)
 export const nextFollowup = {
 	name: "nextFollowup",
-	default: emptyStringDefault,
+	default: null,
 	label: "Fecha de Siguiente Entrevista de Seguimiento",
 	placeholder: "Fecha",
-	//aqui a ver si funciona asi; si no hay valor esta bien y si hay que cheque con regex
-	validation: yup
-		.string()
-		.default(emptyStringDefault)
-		.optional()
-		.matches(dateRegex, validationUtils.NEXTFOLLOWUP_INVALID)
+	validation: yup.date().optional()
 };
 
-//aqui faltaria nextEvaluationReport
+//nextEvaluationReport textfield (date)
 export const nextEvaluationReport = {
 	name: "nextEvaluationReport",
 	default: emptyStringDefault,
 	label: "Fecha de Siguiente Reporte de Evaluación",
 	placeholder: "Fecha",
 	//aqui a ver si funciona asi; si no hay valor esta bien y si hay que cheque con regex
-	validation: yup
-		.string()
-		.default(emptyStringDefault)
-		.optional()
-		.matches(dateRegex, validationUtils.NEXTEVALREPORT_INVALID)
+	validation: yup.date().optional()
 };
 
 //emails  textfield (string[])
@@ -530,11 +521,7 @@ export const birthday = {
 	default: emptyStringDefault,
 	label: "Fecha de Nacimiento",
 	placeholder: "Fecha de Nacimiento",
-	validation: yup
-		.string()
-		.default(emptyStringDefault)
-		.required(validationUtils.BIRTHDAY_EMPTY)
-		.matches(dateRegex, validationUtils.BIRTHDAY_INVALID)
+	validation: yup.date().required(validationUtils.BIRTHDAY_EMPTY)
 };
 
 //education select
@@ -549,4 +536,13 @@ export const education = {
 		.required(validationUtils.EDUCAITON_EMPTY)
 		.max(validationUtils.EDUCATION_MAX_LENGTH, validationUtils.EDUCATION_TOOLONG)
 		.oneOf(validationUtils.EDUCATION_VALUES, validationUtils.EDUCATION_INVALID)
+};
+
+//notes editor (object)
+export const notes = {
+	name: "notes",
+	default: "",
+	label: "Notas",
+	placeholder: "Agregar notas..."
+	//no validation needed
 };

@@ -1,11 +1,19 @@
-import React, { useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import ReactDOM from "react-dom";
 import { FileUpload } from "primereact/fileupload";
+import { Image } from "react-bootstrap";
 import { defaultImageWhenEmpty } from "../helpers/Functions";
 import { profileImageTextDefault, profileImageTextPreview } from "../helpers/AppProps";
 
 const ImageUploader = (props) => {
-	const { url, loggedTherapistPhotoUrl, imageUploaderRef, selectedImage } = props;
+	const { url, photoUrl, imagePreviewTitle } = props;
 	const validationUtils = useRef({});
+	const imageUploaderRef = useRef({});
+
+	const [profileImageText, setProfileImageText] = useState(profileImageTextDefault);
+	const [imagePreviewSource, setImagePreviewSource] = useState(() =>
+		defaultImageWhenEmpty(photoUrl)
+	);
 
 	useEffect(() => {
 		//aqui se obtiene desde redux o algo asi
@@ -186,58 +194,97 @@ const ImageUploader = (props) => {
 		};
 	}, []);
 
+	const selectedImage = (sourceImage, text, selected) => {
+		setImagePreviewSource(sourceImage);
+		setProfileImageText(text);
+
+		//disable/enable select button
+		let imageUploader = ReactDOM.findDOMNode(imageUploaderRef.current);
+		let spanContainer = imageUploader.children[0].children[0];
+		let fileInput = spanContainer.children[0];
+		if (selected) {
+			fileInput.disabled = true;
+			spanContainer.classList.add("p-disabled");
+		} else {
+			fileInput.disabled = false;
+			spanContainer.classList.remove("p-disabled");
+		}
+	};
+
 	return (
-		<div className="p-field">
-			<FileUpload
-				ref={imageUploaderRef}
-				id="imageUploader"
-				name="file" //aqui falta, checar que este bien
-				url={url}
-				chooseLabel="Escoger"
-				uploadLabel="Subir"
-				cancelLabel="Cancelar"
-				emptyTemplate='Suelte un archivo aquí para continuar, se verá una vista previa en "Imagen actual"'
-				multiple={false}
-				withCredentials={true}
-				//validation aqui falta
-				maxFileSize={validationUtils.current.IMAGE_SIZE_MAX}
-				accept="image/*"
-				invalidFileSizeMessageSummary={validationUtils.IMAGE_TOOBIG}
-				//triggers
-				onSelect={(e) => {
-					selectedImage(e.files[0].objectURL, profileImageTextPreview, true);
-				}}
-				onClear={() => {
-					//restore default values
-					selectedImage(
-						defaultImageWhenEmpty(loggedTherapistPhotoUrl),
-						profileImageTextDefault,
-						false
-					);
-				}}
-				onRemove={(e) => {
-					//restore default values
-					selectedImage(
-						defaultImageWhenEmpty(loggedTherapistPhotoUrl),
-						profileImageTextDefault,
-						false
-					);
-				}}
-				onUpload={(e) => {
-					//restore default values
-					selectedImage(
-						defaultImageWhenEmpty(loggedTherapistPhotoUrl),
-						profileImageTextDefault,
-						false
-					);
-				}}
-			/>
-			<small id="profileImageHelp">
-				La imagen se actualiza al presionar "Subir". Se recomienda usar una imagen cuadrada.
-				Tamaño máximo: 10 MB.
-			</small>
+		<div className="p-fluid p-formgrid p-grid">
+			<div className="p-col-12 p-mt-3">
+				<h6>{imagePreviewTitle}</h6>
+			</div>
+			<div className="p-col-12 p-lg-3 p-text-center">
+				<div className="p-field">
+					<Image
+						id="imagePreview"
+						src={imagePreviewSource}
+						className="p-shadow-2 rounded-image rounded-image-big"
+					/>
+					<br />
+					<small id="imagePreviewHelper">{profileImageText}</small>
+				</div>
+			</div>
+			<div className="p-col-12 p-lg-9">
+				<div className="p-field">
+					<FileUpload
+						ref={imageUploaderRef}
+						id="imageUploader"
+						name="file" //aqui falta, checar que este bien
+						url={url}
+						chooseLabel="Escoger"
+						uploadLabel="Subir"
+						cancelLabel="Cancelar"
+						emptyTemplate='Suelte un archivo aquí para continuar, se verá una vista previa en "Imagen actual"'
+						multiple={false}
+						withCredentials={true}
+						//validation aqui falta
+						maxFileSize={validationUtils.current.IMAGE_SIZE_MAX}
+						accept="image/*"
+						invalidFileSizeMessageSummary={validationUtils.IMAGE_TOOBIG}
+						//triggers
+						onSelect={(e) => {
+							selectedImage(e.files[0].objectURL, profileImageTextPreview, true);
+						}}
+						onClear={() => {
+							//restore default values
+							selectedImage(
+								defaultImageWhenEmpty(photoUrl),
+								profileImageTextDefault,
+								false
+							);
+						}}
+						onRemove={(e) => {
+							//restore default values
+							selectedImage(
+								defaultImageWhenEmpty(photoUrl),
+								profileImageTextDefault,
+								false
+							);
+						}}
+						onUpload={(e) => {
+							//restore default values
+							selectedImage(
+								defaultImageWhenEmpty(photoUrl),
+								profileImageTextDefault,
+								false
+							);
+						}}
+					/>
+					<small id="profileImageHelp">
+						La imagen se actualiza al presionar "Subir". Se recomienda usar una imagen
+						cuadrada. Tamaño máximo: 10 MB.
+					</small>
+				</div>
+			</div>
 		</div>
 	);
+};
+
+ImageUploader.defaultProps = {
+	imagePreviewTitle: "Foto de Perfil"
 };
 
 export default ImageUploader;

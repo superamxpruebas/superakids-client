@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import ReactDOM from "react-dom";
 import { Image, Tabs, Tab } from "react-bootstrap";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
@@ -30,13 +29,12 @@ import FormInput from "../forms/FormInput";
 import ImageUploader from "../forms/ImageUploader";
 import { stringArrayToPRSelectObjects } from "../helpers/Functions";
 import { defaultImageWhenEmpty } from "../helpers/Functions";
-import { passwordRulesMessageObject, profileImageTextDefault } from "../helpers/AppProps";
+import { passwordRulesMessageObject } from "../helpers/AppProps";
 
 const AccountDetails = () => {
 	const sexOptionsUi = useRef([]);
 	const passwordMessage = useRef(null);
 	const validationUtils = useRef({});
-	const imageUploader = useRef({});
 
 	//aqui esta hardcoded - falta
 	//aqui creo que tengo que usar useselector de redux
@@ -105,10 +103,6 @@ const AccountDetails = () => {
 	const [showModal, setShowModal] = useState(false);
 	const [selectedRole, setSelectedRole] = useState(null);
 	const [roleDetails, setRoleDetails] = useState("Seleccione un rol para ver sus detalles.");
-	const [profileImageText, setProfileImageText] = useState(profileImageTextDefault);
-	const [imagePreviewSource, setImagePreviewSource] = useState(() =>
-		defaultImageWhenEmpty(loggedTherapist.photoUrl)
-	);
 
 	/* get values required values once */
 	useEffect(() => {
@@ -301,23 +295,6 @@ const AccountDetails = () => {
 		}
 	};
 
-	const selectedImage = (sourceImage, text, selected) => {
-		setImagePreviewSource(sourceImage);
-		setProfileImageText(text);
-
-		//disable/enable select button
-		let imageUploaderRef = ReactDOM.findDOMNode(imageUploader.current);
-		let spanContainer = imageUploaderRef.children[0].children[0];
-		let fileInput = spanContainer.children[0];
-		if (selected) {
-			fileInput.disabled = true;
-			spanContainer.classList.add("p-disabled");
-		} else {
-			fileInput.disabled = false;
-			spanContainer.classList.remove("p-disabled");
-		}
-	};
-
 	const signOut = () => {
 		//aqui falta
 		console.log("sign out");
@@ -361,7 +338,7 @@ const AccountDetails = () => {
 				onClick={() => {
 					setShowModal(true);
 					//restore therapist image
-					setImagePreviewSource(defaultImageWhenEmpty(loggedTherapist.photoUrl));
+					//setImagePreviewSource(defaultImageWhenEmpty(loggedTherapist.photoUrl));
 				}}
 			/>
 			<Button
@@ -380,34 +357,15 @@ const AccountDetails = () => {
 			>
 				<Tabs defaultActiveKey="update" id="therapistModalTabs">
 					<Tab eventKey="update" title="Modificar" className="scrollable-tab">
-						<div className="p-fluid p-formgrid p-grid">
-							<div className="p-col-12 p-mt-3">
-								<h6>Foto de Perfil</h6>
-							</div>
-							<div className="p-col-12 p-lg-3 p-text-center">
-								<div className="p-field">
-									<Image
-										id="imagePreview"
-										src={imagePreviewSource}
-										className="p-shadow-2 rounded-image rounded-image-big"
-									/>
-									<br />
-									<small id="imagePreviewHelper">{profileImageText}</small>
-								</div>
-							</div>
-							<div className="p-col-12 p-lg-9">
-								<ImageUploader
-									url={"aqui falta"} //aqui falta, creo que la voy importar de un archivo
-									loggedTherapistPhotoUrl={loggedTherapist.photoUrl}
-									imageUploaderRef={imageUploader}
-									selectedImage={selectedImage}
-								/>
-							</div>
-						</div>
+						<ImageUploader
+							url={"aqui falta"} //aqui falta, creo que la voy importar de un archivo
+							photoUrl={loggedTherapist.photoUrl} //aqui checar que quede bien el nombre generico
+						/>
 						<Formik
 							initialValues={initialValues}
 							validationSchema={validationSchema}
 							onSubmit={onSubmit}
+							isInitialValid={false}
 						>
 							{(formik) => {
 								const {
