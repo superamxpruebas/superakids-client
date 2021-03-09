@@ -337,8 +337,6 @@ const AccountDetails = () => {
 				style={{ marginBottom: "10px", width: "100%" }}
 				onClick={() => {
 					setShowModal(true);
-					//restore therapist image
-					//setImagePreviewSource(defaultImageWhenEmpty(loggedTherapist.photoUrl));
 				}}
 			/>
 			<Button

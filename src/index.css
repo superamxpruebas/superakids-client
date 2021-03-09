@@ -255,14 +255,6 @@ nav > div > div > form > div > div > ul > li > span.p-chips-token-label {
 	}
 }
 
-/*handle overflow in tabpanes*/
-.scrollable-tab {
-	overflow-y: auto;
-	min-height: 50vh;
-	max-height: 50vh;
-	max-width: 100%;
-}
-
 /*getting rid of x overflow on modal*/
 div#therapistModalTabs-tabpane-update > div.p-grid {
 	margin-right: 0px;
@@ -378,4 +370,8 @@ div#therapistModalTabs-tabpane-update > div.p-grid {
 
 .p-datepicker-calendar thead tr th {
 	text-align: center;
+}
+
+.hide {
+	display: none !important;
 }

@@ -6,7 +6,7 @@ import { defaultImageWhenEmpty } from "../helpers/Functions";
 import { profileImageTextDefault, profileImageTextPreview } from "../helpers/AppProps";
 
 const ImageUploader = (props) => {
-	const { url, photoUrl, imagePreviewTitle } = props;
+	const { url, photoUrl, imagePreviewTitle, disabled } = props;
 	const validationUtils = useRef({});
 	const imageUploaderRef = useRef({});
 
@@ -216,7 +216,7 @@ const ImageUploader = (props) => {
 			<div className="p-col-12 p-mt-3">
 				<h6>{imagePreviewTitle}</h6>
 			</div>
-			<div className="p-col-12 p-lg-3 p-text-center">
+			<div className={"p-col-12 " + (disabled ? "" : " p-lg-3 ") + "p-text-center"}>
 				<div className="p-field">
 					<Image
 						id="imagePreview"
@@ -227,7 +227,7 @@ const ImageUploader = (props) => {
 					<small id="imagePreviewHelper">{profileImageText}</small>
 				</div>
 			</div>
-			<div className="p-col-12 p-lg-9">
+			<div className={disabled ? "hide" : "p-col-12 p-lg-9"}>
 				<div className="p-field">
 					<FileUpload
 						ref={imageUploaderRef}
@@ -272,6 +272,7 @@ const ImageUploader = (props) => {
 								false
 							);
 						}}
+						disabled={disabled}
 					/>
 					<small id="profileImageHelp">
 						La imagen se actualiza al presionar "Subir". Se recomienda usar una imagen
@@ -284,7 +285,8 @@ const ImageUploader = (props) => {
 };
 
 ImageUploader.defaultProps = {
-	imagePreviewTitle: "Foto de Perfil"
+	imagePreviewTitle: "Foto de Perfil",
+	disabled: false
 };
 
 export default ImageUploader;

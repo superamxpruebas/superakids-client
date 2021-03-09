@@ -1,4 +1,23 @@
 import React from "react";
+import { Dropdown } from "primereact/dropdown";
+import { Calendar } from "primereact/calendar";
+import { Button } from "primereact/button";
+import {
+	firstName,
+	secondName,
+	paternalSurname,
+	maternalSurname,
+	education,
+	sex,
+	birthday
+} from "./Fields";
+import {
+	dateToString,
+	currentYearRange,
+	parseDateTime,
+	dateTimeToString
+} from "../helpers/Functions";
+import { spanishCalendarProps, imagePreviewTitleUsers } from "../helpers/AppProps";
 import ImageUploader from "./ImageUploader";
 import FormInput from "./FormInput";
 import { Formik, Form } from "formik";
@@ -14,25 +33,26 @@ const userValidationSchema = yup.object().shape({
 	[education.name]: education.validation,
 	[birthday.name]: birthday.validation
 });
-const userInitialValues = {
-	[firstName.name]: firstName.default,
-	[secondName.name]: secondName.default,
-	[paternalSurname.name]: paternalSurname.default,
-	[maternalSurname.name]: maternalSurname.default,
-	[sex.name]: sex.default,
-	[education.name]: education.default,
-	[birthday.name]: birthday.default
-};
 
 const UserForm = (props) => {
+	const {
+		userAction,
+		usingUser,
+		selectedUser,
+		educationOptionsUi,
+		customModalButtonText,
+		sexOptionsUi,
+		setShowModal
+	} = props;
+
 	//methods
 
-	const handleUserSubmit = (form) => {
+	const handleUserSubmit = (form, onSubmitProps) => {
 		//aqui falta todo
 
 		//aqui puede ser crear o actualizar
 
-		//las fechas deben de transformarse antes de mandar request
+		//aqui las fechas deben de transformarse antes de mandar request
 		form = {
 			//aqui checar que este bien
 			...form,
@@ -42,24 +62,19 @@ const UserForm = (props) => {
 		console.log("se subio formulario");
 		console.log(form);
 
+		onSubmitProps.setSubmitting(false);
 		setShowModal(false);
 	};
 
-	const handleUserDelete = () => {
-		//aqui falta todo
-
-		console.log("se elimino a usuario");
-		setShowDeleteConfirm(false);
-	};
-
-	const { userAction, usingUser, disableForm } = props;
+	const disabled = userAction === "DETAILS";
 	return (
 		<>
-			{userAction === "UPDATE" && (
+			{(userAction === "UPDATE" || userAction === "DETAILS") && (
 				<ImageUploader
 					url={"aqui falta"} //aqui falta, creo que la voy importar de un archivo
 					photoUrl={selectedUser ? selectedUser.imageUrl : null}
 					imagePreviewTitle={imagePreviewTitleUsers}
+					disabled={disabled}
 				/>
 			)}
 			<Formik
@@ -92,6 +107,7 @@ const UserForm = (props) => {
 										inputName={firstName.name}
 										labelText={firstName.label}
 										placeholder={firstName.placeholder}
+										disabled={disabled}
 									/>
 								</div>
 								<div className="p-col-6">
@@ -100,6 +116,7 @@ const UserForm = (props) => {
 										labelText={secondName.label}
 										placeholder={secondName.placeholder}
 										optionalField
+										disabled={disabled}
 									/>
 								</div>
 								<div className="p-col-6">
@@ -107,6 +124,7 @@ const UserForm = (props) => {
 										inputName={paternalSurname.name}
 										labelText={paternalSurname.label}
 										placeholder={paternalSurname.placeholder}
+										disabled={disabled}
 									/>
 								</div>
 								<div className="p-col-6">
@@ -114,6 +132,7 @@ const UserForm = (props) => {
 										inputName={maternalSurname.name}
 										labelText={maternalSurname.label}
 										placeholder={maternalSurname.placeholder}
+										disabled={disabled}
 									/>
 								</div>
 								<div className="p-col-12">
@@ -128,6 +147,7 @@ const UserForm = (props) => {
 												setFieldValue(sex.name, e.target.value);
 											}}
 											placeholder={sex.placeholder}
+											disabled={disabled}
 										/>
 										<small id={sex.name + "-error"} className="p-invalid">
 											{touched[sex.name] &&
@@ -148,6 +168,7 @@ const UserForm = (props) => {
 												setFieldValue(education.name, e.target.value);
 											}}
 											placeholder={education.placeholder}
+											disabled={disabled}
 										/>
 										<small id={education.name + "-error"} className="p-invalid">
 											{touched[education.name] &&
@@ -174,6 +195,7 @@ const UserForm = (props) => {
 											yearNavigator
 											yearRange={currentYearRange()}
 											placeholder={birthday.placeholder}
+											disabled={disabled}
 										/>
 										<small id={birthday.name + "-helper"}>
 											Formato: dd/mm/aaaa
@@ -185,30 +207,34 @@ const UserForm = (props) => {
 										</small>
 									</div>
 								</div>
-								<div
-									className="p-col-12"
-									style={{
-										padding: "0px 10px"
-									}}
-								>
-									<label>Fecha de creación: </label>
-									<span>
-										{selectedUser && //aqui voy, me quede haciendo esto
-											" " +
-												dateTimeToString(
-													parseDateTime(selectedUser.addedDate)
-												)}
-									</span>
-								</div>
-								<div className="p-col-12 p-mt-3 p-mb-3">
-									<Button
-										label={customModalButtonText}
-										icon="pi pi-check"
-										className="p-button"
-										type="submit"
-										disabled={!isValid || isSubmitting}
-									/>
-								</div>
+								{(userAction === "UPDATE" || userAction === "DETAILS") && (
+									<div
+										className="p-col-12"
+										style={{
+											padding: "0px 10px"
+										}}
+									>
+										<label>Fecha de creación: </label>
+										<span>
+											{selectedUser &&
+												" " +
+													dateTimeToString(
+														parseDateTime(selectedUser.addedDate)
+													)}
+										</span>
+									</div>
+								)}
+								{!disabled && (
+									<div className="p-col-12 p-mt-3 p-mb-3">
+										<Button
+											label={customModalButtonText}
+											icon="pi pi-check"
+											className="p-button"
+											type="submit"
+											disabled={!isValid || isSubmitting}
+										/>
+									</div>
+								)}
 							</div>
 						</Form>
 					);
