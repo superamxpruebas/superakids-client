@@ -100,6 +100,12 @@ main h1 {
 	text-align: left;
 }
 
+#dashboardA {
+	width: 100%;
+	text-align: left;
+	margin-bottom: 0.5rem;
+}
+
 /* ---------------- aqui empieza ------------------- */
 /* ---------------- SuperaKids Custom CSS ------------------- */
 
@@ -374,4 +380,12 @@ div#therapistModalTabs-tabpane-update > div.p-grid {
 
 .hide {
 	display: none !important;
+}
+
+/* ------- cards -------- */
+
+a > div.card-title.h5 {
+	font-family: "Nunito";
+	font-weight: 700;
+	color: #3067c7; /*#053994*/
 }

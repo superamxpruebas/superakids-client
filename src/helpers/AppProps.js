@@ -5,7 +5,24 @@ This file contains constants and default values used throught the whole applicat
 */
 
 //app version
-export const AppVersion = "0.1.0"; //last updated 22/dec/2020
+export const AppVersion = "1.0.1"; //last updated 15/mar/2020
+
+//api url
+export const apiURL = "http://localhost:8080"; //aqui hay que estar modificando
+//api version
+export const apiVersion = "/api/v1";
+
+//endpoints
+export const therapistsEndpoint = "/therapists";
+export const usersEndpoint = "/users";
+export const problemsEndpoint = "/problems";
+
+//image upload endpoints
+export const therapistImageEndpoint = apiURL + apiVersion + therapistsEndpoint + "/?/image/upload";
+export const userImageEndpoint = apiURL + apiVersion + usersEndpoint + "/?/image/upload";
+
+//local/session storage code
+export const storageCode = "SK-2021";
 
 //default logos
 export const AppLogoUrl =
@@ -29,6 +46,7 @@ export const defaultAccountPhoto =
 
 // title values for ImageUploader component
 export const imagePreviewTitleUsers = "Foto de Usuario";
+export const imagePreviewTitleTherapists = "Foto de Terapeuta";
 
 //default password values
 export const passwordRulesMessageObject = {
@@ -93,3 +111,12 @@ export const spanishCalendarProps = {
 };
 //primereact calendar format
 export const formatCalendarProps = "dd/mm/yy";
+
+//diccionario de severidades para toasts
+export const severityTitles = {
+	success: "Éxito",
+	info: "Informe",
+	warn: "Advertencia",
+	error: "Error",
+	many: "Advertencia"
+};

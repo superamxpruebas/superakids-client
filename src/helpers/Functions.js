@@ -105,3 +105,21 @@ export const currentYearRange = () => {
 	let year = new Date().getFullYear();
 	return `1960:${year}`;
 };
+
+export const addDateAndNotesObjectsTo = (tempUsers) => {
+	return tempUsers.map((user, i) => {
+		/*user.nextFollowupDate = parseDate(user.nextFollowup);
+		user.nextEvaluationReportDate = parseDate(user.nextEvaluationReport);
+		let tempObj = JSON.parse(user.notes);
+		user.notesContents = tempObj.contents;*/
+		return addDateAndNotesObjectsToOnly(user);
+	});
+};
+
+export const addDateAndNotesObjectsToOnly = (user) => {
+	user.nextFollowupDate = parseDate(user.nextFollowup);
+	user.nextEvaluationReportDate = parseDate(user.nextEvaluationReport);
+	let tempObj = JSON.parse(user.notes);
+	user.notesContents = tempObj.contents;
+	return user;
+};

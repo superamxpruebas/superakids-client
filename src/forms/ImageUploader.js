@@ -1,12 +1,24 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useDispatch } from "react-redux";
 import ReactDOM from "react-dom";
 import { FileUpload } from "primereact/fileupload";
 import { Image } from "react-bootstrap";
 import { defaultImageWhenEmpty } from "../helpers/Functions";
-import { profileImageTextDefault, profileImageTextPreview } from "../helpers/AppProps";
+import {
+	profileImageTextDefault,
+	profileImageTextPreview,
+	severityTitles,
+	storageCode,
+	therapistImageEndpoint,
+	userImageEndpoint
+} from "../helpers/AppProps";
+import { THERAPIST_LOGIN_SUCCESS } from "../constants/therapistConstants";
+import { USER_LIST_SUCCESS } from "../constants/userConstants";
+import { logout } from "../actions/therapistActions";
 
+//mode = user, therapist, self
 const ImageUploader = (props) => {
-	const { url, photoUrl, imagePreviewTitle, disabled } = props;
+	const { photoUrl, imagePreviewTitle, disabled, id, toastRef, closeModal, mode } = props;
 	const validationUtils = useRef({});
 	const imageUploaderRef = useRef({});
 
@@ -15,8 +27,14 @@ const ImageUploader = (props) => {
 		defaultImageWhenEmpty(photoUrl)
 	);
 
+	let url = "";
+	if (mode === "therapist" || mode === "self") url = therapistImageEndpoint.replace("?", id);
+	else url = userImageEndpoint.replace("?", id);
+
+	const dispatch = useDispatch();
+
 	useEffect(() => {
-		//aqui se obtiene desde redux o algo asi
+		//aqui despues
 		validationUtils.current = {
 			PROBLEM_TITLE_EMPTY: "El título del problema no puede estar vacío.",
 			ROLES_LIST_NOT_FOUND: "No se encontró el rol especificado.",
@@ -211,6 +229,83 @@ const ImageUploader = (props) => {
 		}
 	};
 
+	//methods
+
+	const uploadError = (e) => {
+		let response = JSON.parse(e.xhr.response);
+		console.log(response);
+
+		if (response.status === 401) {
+			dispatch(logout());
+			return;
+		}
+
+		closeModal();
+		if (response) {
+			let severity = response.severity;
+			toastRef.current.show({
+				severity: severity || "error",
+				summary: severityTitles[severity || "error"],
+				detail: response.message,
+				life: 4000,
+				closable: true
+			});
+		} else {
+			toastRef.current.show({
+				severity: "error",
+				summary: severityTitles["error"],
+				detail: response.statusText || "error",
+				life: 4000,
+				closable: true
+			});
+		}
+	};
+
+	const uploadSuccess = (e) => {
+		let response = JSON.parse(e.xhr.response);
+
+		if (mode === "self") {
+			let currentTherapist = JSON.parse(
+				sessionStorage.getItem("therapistInfo" + storageCode)
+			);
+			currentTherapist.imageUrl = response.subBody;
+			sessionStorage.setItem("therapistInfo" + storageCode, JSON.stringify(currentTherapist));
+
+			dispatch({
+				type: THERAPIST_LOGIN_SUCCESS,
+				payload: currentTherapist
+			});
+		}
+		if (mode === "therapist") {
+			//aqui falta
+		}
+		if (mode === "user") {
+			let users = JSON.parse(sessionStorage.getItem("users" + storageCode));
+			const userIndex = users.map((user) => user.userId).indexOf(id);
+			let tempUser = users[userIndex];
+			tempUser.imageUrl = response.subBody;
+			users[userIndex] = tempUser;
+			sessionStorage.setItem("users" + storageCode, JSON.stringify(users));
+			dispatch({
+				type: USER_LIST_SUCCESS,
+				payload: users
+			});
+		}
+
+		//aqui despues
+		//no se recarga cuando es con la misma extensión de archivo
+		// ver como recargar
+
+		closeModal();
+		toastRef.current.show({
+			severity: response.severity,
+			summary: severityTitles[response.severity],
+			detail: response.message,
+			life: 4000,
+			closable: true
+		});
+	};
+
 	return (
 		<div className="p-fluid p-formgrid p-grid">
 			<div className="p-col-12 p-mt-3">
@@ -232,15 +327,15 @@ const ImageUploader = (props) => {
 					<FileUpload
 						ref={imageUploaderRef}
 						id="imageUploader"
-						name="file" //aqui falta, checar que este bien
+						name="file"
 						url={url}
 						chooseLabel="Escoger"
 						uploadLabel="Subir"
 						cancelLabel="Cancelar"
 						emptyTemplate='Suelte un archivo aquí para continuar, se verá una vista previa en "Imagen actual"'
 						multiple={false}
-						withCredentials={true}
-						//validation aqui falta
+						withCredentials
+						//validation
 						maxFileSize={validationUtils.current.IMAGE_SIZE_MAX}
 						accept="image/*"
 						invalidFileSizeMessageSummary={validationUtils.IMAGE_TOOBIG}
@@ -271,7 +366,9 @@ const ImageUploader = (props) => {
 								profileImageTextDefault,
 								false
 							);
+							uploadSuccess(e);
 						}}
+						onError={(e) => uploadError(e)}
 						disabled={disabled}
 					/>
 					<small id="profileImageHelp">
@@ -286,7 +383,8 @@ const ImageUploader = (props) => {
 
 ImageUploader.defaultProps = {
 	imagePreviewTitle: "Foto de Perfil",
-	disabled: false
+	disabled: false,
+	id: 0
 };
 
 export default ImageUploader;

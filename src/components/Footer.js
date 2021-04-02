@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { Button } from "primereact/button";
+import { Toast } from "primereact/toast";
+import { ProgressBar } from "primereact/progressbar";
 import { Formik, Form } from "formik";
 import * as yup from "yup";
 import FormInput from "../forms/FormInput";
@@ -8,31 +10,32 @@ import { title, view, description } from "../forms/Fields";
 import SKModal from "./SKModal";
 import FormTextAreaInput from "../forms/FormTextAreaInput";
 import { AppVersion } from "../helpers/AppProps";
+import { problem } from "../actions/problemActions";
+import { useSelector, useDispatch } from "react-redux";
 
 const Footer = (props) => {
 	const { screenName } = props;
 	const [showModal, setShowModal] = useState(false);
+	const toastRef = useRef(null);
 
-	//from data
-	const validationSchema = yup.object().shape({
-		[title.name]: title.validation,
-		[view.name]: view.validation,
-		[description.name]: description.validation
-	});
-	const initialValues = {
-		[title.name]: title.default,
-		[view.name]: screenName,
-		[description.name]: description.default
-	};
+	const dispatch = useDispatch();
+	const { loading } = useSelector((state) => state.problem);
+	const { therapistInfo } = useSelector((state) => state.therapistLogin);
 
 	//methods
-	const onSubmit = (form) => {
-		//aqui falta todo
-		//
-		//console.log("se subio formulario");
+	const handleOnSubmit = (form, onSubmitProps) => {
+		onSubmitProps.setSubmitting(true);
+		dispatch(problem(form, closeModal, toastRef));
+		onSubmitProps.setSubmitting(false);
 	};
+
+	const closeModal = () => {
+		setShowModal(false);
+	};
+
 	return (
 		<footer>
+			<Toast ref={toastRef} position="top-right" baseZIndex={10000} />
 			<Container>
 				<Row>
 					<Col></Col>
@@ -65,9 +68,19 @@ const Footer = (props) => {
 				}}
 			>
 				<Formik
-					initialValues={initialValues}
-					validationSchema={validationSchema}
-					onSubmit={onSubmit}
+					initialValues={{
+						therapistId: therapistInfo.therapistId,
+						[title.name]: title.default,
+						[view.name]: screenName,
+						[description.name]: description.default
+					}}
+					validationSchema={yup.object().shape({
+						[title.name]: title.validation,
+						[view.name]: view.validation,
+						[description.name]: description.validation
+					})}
+					onSubmit={handleOnSubmit}
+					isInitialValid={false}
 				>
 					{(formik) => {
 						const { isSubmitting, isValid } = formik;
@@ -113,12 +126,20 @@ const Footer = (props) => {
 									</div>
 									<div className="p-col-6 p-mt-3 p-mb-3">
 										<Button
-											label="Guardar Cambios"
+											label="Enviar"
 											icon="pi pi-check"
 											className="p-button"
 											type="submit"
-											disabled={!isValid || isSubmitting}
+											disabled={!isValid || isSubmitting || loading}
 										/>
+									</div>
+									<div className="p-col-12 p-mt-1 p-mb-1">
+										{loading && (
+											<ProgressBar
+												mode="indeterminate"
+												style={{ height: "6px" }}
+											></ProgressBar>
+										)}
 									</div>
 								</div>
 							</Form>

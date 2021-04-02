@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { Image, Container, Row, Tabs, Tab } from "react-bootstrap";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { Link } from "react-router-dom";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Dropdown } from "primereact/dropdown";
@@ -12,6 +11,8 @@ import { Button } from "primereact/button";
 import { Menubar } from "primereact/menubar";
 import { Calendar } from "primereact/calendar";
 import { Dialog } from "primereact/dialog";
+import { Toast } from "primereact/toast";
+import { ProgressBar } from "primereact/progressbar";
 import SKModal from "../components/SKModal";
 import { Usuarios as screenName, spanishCalendarProps } from "../helpers/AppProps";
 import {
@@ -41,13 +42,42 @@ import {
 } from "../forms/Fields";
 import UserForm from "../forms/UserForm";
 import UserDatesAndNotesForm from "../forms/UserDatesAndNotesForm";
+import { useDispatch, useSelector } from "react-redux";
+import { getUsersList, deleteUser } from "../actions/userActions";
 
-const Users = () => {
-	//const users = useRef(null);
-	const [users, setUsers] = useState([]);
+const Users = ({ history }) => {
+	const toastRef = useRef(null);
 	const usersDataTable = useRef(null);
-	const educationOptionsUi = useRef();
-	const sexOptionsUi = useRef([]);
+	const educationOptionsUi = useRef(
+		stringArrayToPRSelectObjects([
+			"1er Año de Preescolar",
+			"2do Año de Preescolar",
+			"3er Año de Preescolar",
+			"1er Año de Primaria",
+			"2do Año de Primaria",
+			"3er Año de Primaria",
+			"4to Año de Primaria",
+			"5to Año de Primaria",
+			"6to Año de Primaria",
+			"1er Año de Secundaria",
+			"2do Año de Secundaria",
+			"3rer Año de Secundaria",
+			"1er Año de Preparatoria",
+			"2do Año de Preparatoria",
+			"3er Año de Preparatoria",
+			"4to Año de Preparatoria",
+			"1er Año de Universidad",
+			"2do Año de Universidad",
+			"3er Año de Universidad",
+			"4to Año de Universidad",
+			"5to Año de Universidad en adelante",
+			"Maestría",
+			"Doctorado",
+			"Sin estudios",
+			"Profesionista"
+		])
+	); //aqui despues
+	const sexOptionsUi = useRef(stringArrayToPRSelectObjects(["Hombre", "Mujer"])); //aqui despues
 
 	const birthdayYearRangeRef = useRef("");
 	const twoYearRangeRef = useRef("");
@@ -56,9 +86,31 @@ const Users = () => {
 	const todayDateRef = useRef(new Date());
 	const tomorrowDateRef = useRef(new Date());
 
+	const dispatch = useDispatch();
+	const { therapistInfo } = useSelector((state) => state.therapistLogin);
+	const { loadingUsers, users } = useSelector((state) => state.users);
+
+	if (!therapistInfo) {
+		history.push("/login");
+	}
+
+	useEffect(() => {
+		if (users.length === 0) dispatch(getUsersList(therapistInfo.therapistId, toastRef));
+
+		//initialize attributes only once
+		birthdayYearRangeRef.current = currentYearRange();
+		twoYearRangeRef.current = getTwoYearRange();
+		presentYearRef.current = getPresentYear();
+		nextYearRef.current = getNextYear();
+		todayDateRef.current = getTodayDate();
+		tomorrowDateRef.current = getTomorrowFrom(todayDateRef.current.getTime());
+		// eslint-disable-next-line
+	}, []);
+
+	//aqui lo voy a dejar por mientras
 	useEffect(() => {
 		//aqui falta, usersService se obtiene de redux o algo
-		let usersService2 = [
+		/*let usersService2 = [
 			{
 				userId: 1,
 				therapistId: 1,
@@ -266,47 +318,7 @@ const Users = () => {
 				fullName: "eefefeijefij  morales ornelas"
 			}
 		];
-		setUsers(addDateObjectsTo(usersService2));
-
-		//aqui falta - se obtiene de session, tal vez usar spread operator para hacer copia y que se quede guardado
-		educationOptionsUi.current = stringArrayToPRSelectObjects([
-			"1er Año de Preescolar",
-			"2do Año de Preescolar",
-			"3er Año de Preescolar",
-			"1er Año de Primaria",
-			"2do Año de Primaria",
-			"3er Año de Primaria",
-			"4to Año de Primaria",
-			"5to Año de Primaria",
-			"6to Año de Primaria",
-			"1er Año de Secundaria",
-			"2do Año de Secundaria",
-			"3rer Año de Secundaria",
-			"1er Año de Preparatoria",
-			"2do Año de Preparatoria",
-			"3er Año de Preparatoria",
-			"4to Año de Preparatoria",
-			"1er Año de Universidad",
-			"2do Año de Universidad",
-			"3er Año de Universidad",
-			"4to Año de Universidad",
-			"5to Año de Universidad en adelante",
-			"Maestría",
-			"Doctorado",
-			"Sin estudios",
-			"Profesionista"
-		]);
-
-		//aqui se obtiene desde redux o session, tal vez usar spread operator para hacer copia y que se quede guardado
-		sexOptionsUi.current = stringArrayToPRSelectObjects(["Hombre", "Mujer"]);
-
-		//initialize attributes only once
-		birthdayYearRangeRef.current = currentYearRange();
-		twoYearRangeRef.current = getTwoYearRange();
-		presentYearRef.current = getPresentYear();
-		nextYearRef.current = getNextYear();
-		todayDateRef.current = getTodayDate();
-		tomorrowDateRef.current = getTomorrowFrom(todayDateRef.current.getTime());
+		setUsers(addDateObjectsTo(usersService2));*/
 	}, []);
 
 	//form data
@@ -329,7 +341,7 @@ const Users = () => {
 
 	const [customModalTitle, setCustomModalTitle] = useState("");
 	const [customModalButtonText, setCustomModalButtonText] = useState("");
-	const [userAction, setUserAction] = useState(""); // CREATE or UPDATE only
+	const [userAction, setUserAction] = useState(""); // CREATE, DETAILS, UPDATE
 	const [usingUser, setUsingUser] = useState(userInitialValues);
 	const [usingDatesAndNotes, setUsingDatesAndNotes] = useState(datesAndNotesInitialValues);
 	const [showModal, setShowModal] = useState(false);
@@ -341,20 +353,16 @@ const Users = () => {
 	const [currentFullName, setCurrentFullName] = useState("");
 	const [currentYearsOld, setCurrentYearsOld] = useState([0, 100]);
 	const [currentNextFollowup, setCurrentNextFollowup] = useState(null);
+	const [deleteLoading, setDeleteLoading] = useState(false);
 
 	//methods
 
-	const addDateObjectsTo = (tempUsers) => {
-		console.log("procesando usuarios"); //aqui quitar
-		return tempUsers.map((user, i) => {
-			user.nextFollowupDate = parseDate(user.nextFollowup);
-			user.nextEvaluationReportDate = parseDate(user.nextEvaluationReport);
-			console.log("index: " + i);
-			console.log(user.notes);
-			let tempObj = JSON.parse(user.notes);
-			user.notesContents = tempObj.contents;
-			return user;
-		});
+	const closeDeleteConfirm = () => {
+		setDeleteLoading(false);
+		setShowDeleteConfirm(false);
+		setTimeout(() => {
+			setSelectedUser(null);
+		}, 1000);
 	};
 
 	const handleRowDoubleClick = (e) => {
@@ -370,10 +378,8 @@ const Users = () => {
 	};
 
 	const handleUserDelete = () => {
-		//aqui falta todo
-
-		console.log("se elimino a usuario");
-		setShowDeleteConfirm(false);
+		setDeleteLoading(true);
+		dispatch(deleteUser(selectedUser.userId, closeDeleteConfirm, toastRef));
 	};
 
 	//table components
@@ -528,7 +534,17 @@ const Users = () => {
 					onClick={() => setShowDeleteConfirm(false)}
 					className="p-button-text"
 				/>
-				<Button label="Sí" icon="pi pi-check" onClick={handleUserDelete} />
+				<Button
+					label="Sí"
+					icon="pi pi-check"
+					onClick={handleUserDelete}
+					disabled={deleteLoading}
+				/>
+				{deleteLoading && (
+					<div className="p-col-12 p-mt-1 p-mb-1">
+						<ProgressBar mode="indeterminate" style={{ height: "6px" }}></ProgressBar>
+					</div>
+				)}
 			</div>
 		);
 	};
@@ -544,6 +560,8 @@ const Users = () => {
 					customModalButtonText={customModalButtonText}
 					sexOptionsUi={sexOptionsUi}
 					setShowModal={setShowModal}
+					toastRef={toastRef}
+					setSelectedUser={setSelectedUser}
 				/>
 			);
 		} else {
@@ -558,6 +576,8 @@ const Users = () => {
 							customModalButtonText={customModalButtonText}
 							sexOptionsUi={sexOptionsUi}
 							setShowModal={setShowModal}
+							toastRef={toastRef}
+							setSelectedUser={setSelectedUser}
 						/>
 					</Tab>
 					<Tab eventKey="datesAndNotes" title="Fechas y Notas">
@@ -571,6 +591,8 @@ const Users = () => {
 							nextYearRef={nextYearRef}
 							customModalButtonText={customModalButtonText}
 							userAction={userAction}
+							setSelectedUser={setSelectedUser}
+							toastRef={toastRef}
 						/>
 					</Tab>
 				</Tabs>
@@ -581,9 +603,15 @@ const Users = () => {
 	return (
 		<>
 			<Header />
+			<Toast ref={toastRef} position="top-right" baseZIndex={10000} />
 			<main className="py-4">
 				<Container>
 					<h1 style={{ color: "white" }}>Usuarios</h1>
+					<div id="dashboardA">
+						<a href="/">
+							<i className="pi pi-arrow-left"></i> Regresar a Dashboard
+						</a>
+					</div>
 					<Row>
 						<div className="datatable-doc-demo">
 							<Menubar
@@ -611,9 +639,14 @@ const Users = () => {
 												birthday: parseDate(selectedUser.birthday)
 											});
 											setUsingDatesAndNotes({
-												[nextFollowup.name]: selectedUser.nextFollowupDate,
-												[nextEvaluationReport.name]:
-													selectedUser.nextEvaluationReportDate,
+												[nextFollowup.name]: selectedUser.nextFollowupDate
+													? new Date(selectedUser.nextFollowupDate)
+													: null,
+												[nextEvaluationReport.name]: selectedUser.nextEvaluationReportDate
+													? new Date(
+															selectedUser.nextEvaluationReportDate
+													  )
+													: null,
 												[notes.name]: selectedUser.notesContents
 											});
 											setShowModal(true);
@@ -632,9 +665,12 @@ const Users = () => {
 										label: "Recargar",
 										icon: "pi pi-replay",
 										command: () => {
-											//aqui falta todo
-											alert("recargar");
-										}
+											setSelectedUser(null);
+											dispatch(
+												getUsersList(therapistInfo.therapistId, toastRef)
+											);
+										},
+										disabled: loadingUsers
 									}
 								]}
 								end={
@@ -665,6 +701,8 @@ const Users = () => {
 								currentPageReportTemplate="Mostrando usuarios de {first} a {last} de un total de {totalRecords}"
 								paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
 								rowsPerPageOptions={[10, 25, 50]}
+								loading={loadingUsers}
+								loadingIcon="pi pi-spinner"
 								style={{ width: "100%", minWidth: "100%" }}
 							>
 								<Column selectionMode="single" style={{ width: "3em" }} />

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import AccountDetails from "./AccountDetails";
-//import { Route } from "react-router-dom"; aqui falta ir a dashboard cuando presione logo
 import { LinkContainer } from "react-router-bootstrap";
+//aqui no quitar imports no usados
 import {
 	Navbar,
 	Nav,
@@ -17,10 +17,14 @@ import { Chips } from "primereact/chips";
 import { InputText } from "primereact/inputtext";
 import { normalizeAccents } from "../helpers/Functions";
 import { AppLogoUrl } from "../helpers/AppProps";
+import { useDispatch, useSelector } from "react-redux";
 
 const Header = () => {
 	//ui state
 	const [sideBar, setSideBar] = useState({ visible: false });
+
+	const therapistLogin = useSelector((state) => state.therapistLogin);
+	const { therapistInfo } = therapistLogin;
 
 	const [userSearch, setUserSearch] = useState("");
 	const [barUsers, setBarUsers] = useState([]);
@@ -32,7 +36,7 @@ const Header = () => {
 
 	useEffect(() => {
 		//data
-		//aqui esta hardcoded
+		//aqui despues
 		const users = [
 			{
 				userId: 1,
@@ -95,7 +99,6 @@ const Header = () => {
 			<Navbar expand="lg" collapseOnSelect>
 				<Container>
 					<LinkContainer to="/">
-						{/* aqu falta link a dashboard */}
 						<Navbar.Brand>
 							<img
 								alt="Logo"
@@ -107,7 +110,7 @@ const Header = () => {
 						</Navbar.Brand>
 					</LinkContainer>
 					<Nav className="ml-auto justify-content-end">
-						<Form inline className="mr-4">
+						{/*<Form inline className="mr-4">
 							<InputGroup>
 								<InputGroup.Prepend>
 									<InputGroup.Text
@@ -141,7 +144,6 @@ const Header = () => {
 									id="input-group-dropdown-2"
 								>
 									<Dropdown.ItemText>
-										{/* search user */}
 										<span className="p-input-icon-left">
 											<i className="pi pi-search" />
 											<InputText
@@ -175,7 +177,7 @@ const Header = () => {
 									))}
 								</DropdownButton>
 							</InputGroup>
-						</Form>
+						</Form>*/}
 						<Nav.Link onClick={(e) => setSideBar({ visible: true })}>
 							<i className="far fa-user"></i> Cuenta
 						</Nav.Link>
@@ -188,7 +190,7 @@ const Header = () => {
 				onHide={() => setSideBar({ visible: false })}
 				closeOnEscape={false}
 			>
-				<AccountDetails />
+				<AccountDetails therapistInfo={therapistInfo} />
 			</Sidebar>
 		</header>
 	);

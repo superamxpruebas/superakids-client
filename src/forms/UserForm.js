@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Dropdown } from "primereact/dropdown";
 import { Calendar } from "primereact/calendar";
 import { Button } from "primereact/button";
+import { ProgressBar } from "primereact/progressbar";
 import {
 	firstName,
 	secondName,
@@ -22,6 +23,8 @@ import ImageUploader from "./ImageUploader";
 import FormInput from "./FormInput";
 import { Formik, Form } from "formik";
 import * as yup from "yup";
+import { createUser, updateUser } from "../actions/userActions";
+import { useDispatch } from "react-redux";
 
 //form data
 const userValidationSchema = yup.object().shape({
@@ -42,28 +45,45 @@ const UserForm = (props) => {
 		educationOptionsUi,
 		customModalButtonText,
 		sexOptionsUi,
-		setShowModal
+		setShowModal,
+		toastRef,
+		setSelectedUser
 	} = props;
+
+	const [loading, setLoading] = useState(false);
+
+	const dispatch = useDispatch();
 
 	//methods
 
-	const handleUserSubmit = (form, onSubmitProps) => {
-		//aqui falta todo
-
-		//aqui puede ser crear o actualizar
-
-		//aqui las fechas deben de transformarse antes de mandar request
-		form = {
-			//aqui checar que este bien
-			...form,
-			birthday: dateToString(form.birthday)
-		};
-
-		console.log("se subio formulario");
-		console.log(form);
-
-		onSubmitProps.setSubmitting(false);
+	const closeModal = () => {
+		setLoading(false);
 		setShowModal(false);
+		setTimeout(() => {
+			setSelectedUser(null);
+		}, 1000);
+	};
+
+	const handleUserSubmit = (form, onSubmitProps) => {
+		setLoading(true);
+		onSubmitProps.setSubmitting(true);
+
+		form.birthday = dateToString(form.birthday);
+
+		if (userAction === "CREATE") {
+			dispatch(createUser(form, closeModal, toastRef, onSubmitProps.setSubmitting));
+		}
+		if (userAction === "UPDATE") {
+			dispatch(
+				updateUser(
+					selectedUser.userId,
+					form,
+					closeModal,
+					toastRef,
+					onSubmitProps.setSubmitting
+				)
+			);
+		}
 	};
 
 	const disabled = userAction === "DETAILS";
@@ -71,10 +91,13 @@ const UserForm = (props) => {
 		<>
 			{(userAction === "UPDATE" || userAction === "DETAILS") && (
 				<ImageUploader
-					url={"aqui falta"} //aqui falta, creo que la voy importar de un archivo
 					photoUrl={selectedUser ? selectedUser.imageUrl : null}
 					imagePreviewTitle={imagePreviewTitleUsers}
 					disabled={disabled}
+					id={selectedUser.userId}
+					toastRef={toastRef}
+					closeModal={closeModal}
+					mode="user"
 				/>
 			)}
 			<Formik
@@ -189,7 +212,6 @@ const UserForm = (props) => {
 											}}
 											locale={spanishCalendarProps}
 											showIcon
-											touchUI
 											dateFormat="dd/mm/yy"
 											monthNavigator
 											yearNavigator
@@ -225,15 +247,33 @@ const UserForm = (props) => {
 									</div>
 								)}
 								{!disabled && (
-									<div className="p-col-12 p-mt-3 p-mb-3">
-										<Button
-											label={customModalButtonText}
-											icon="pi pi-check"
-											className="p-button"
-											type="submit"
-											disabled={!isValid || isSubmitting}
-										/>
-									</div>
+									<>
+										<div className="p-col-6 p-mt-3 p-mb-3">
+											<Button
+												label="Restaurar Valores"
+												icon="pi pi-replay"
+												className="p-button p-button-secondary"
+												type="reset"
+											/>
+										</div>
+										<div className="p-col-6 p-mt-3 p-mb-3">
+											<Button
+												label={customModalButtonText}
+												icon="pi pi-check"
+												className="p-button"
+												type="submit"
+												disabled={!isValid || isSubmitting || loading}
+											/>
+										</div>
+										<div className="p-col-12 p-mt-1 p-mb-1">
+											{loading && (
+												<ProgressBar
+													mode="indeterminate"
+													style={{ height: "6px" }}
+												></ProgressBar>
+											)}
+										</div>
+									</>
 								)}
 							</div>
 						</Form>

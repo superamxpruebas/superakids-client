@@ -14,13 +14,17 @@ import reportWebVitals from "./reportWebVitals";
 import TimeAgo from "javascript-time-ago";
 import es from "javascript-time-ago/locale/es";
 import en from "javascript-time-ago/locale/en";
+import { Provider } from "react-redux";
+import store from "./store";
 
 TimeAgo.addDefaultLocale(en);
 TimeAgo.addLocale(es);
 
 ReactDOM.render(
 	<React.StrictMode>
-		<App />
+		<Provider store={store}>
+			<App />
+		</Provider>
 	</React.StrictMode>,
 	document.getElementById("root")
 );

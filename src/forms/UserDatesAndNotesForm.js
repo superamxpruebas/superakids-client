@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
 import { Message } from "primereact/message";
+import { ProgressBar } from "primereact/progressbar";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import ReactTimeAgo from "react-time-ago";
@@ -9,6 +10,8 @@ import { Formik, Form } from "formik";
 import { spanishCalendarProps, formatCalendarProps } from "../helpers/AppProps";
 import { dateToString, sumMonthsTo } from "../helpers/Functions";
 import { nextFollowup, nextEvaluationReport, notes } from "../forms/Fields";
+import { useDispatch } from "react-redux";
+import { patchUser } from "../actions/userActions";
 
 const UserDatesAndNotesForm = (props) => {
 	const {
@@ -20,20 +23,40 @@ const UserDatesAndNotesForm = (props) => {
 		presentYearRef,
 		nextYearRef,
 		customModalButtonText,
-		userAction
+		userAction,
+		toastRef,
+		setSelectedUser
 	} = props;
 
-	//methods
+	const [loading, setLoading] = useState(false);
+
+	const dispatch = useDispatch();
 
 	const disabled = userAction === "DETAILS";
 
-	const handleDatesAndNotesSubmit = (values, onSubmitProps) => {
-		//aqui falta todo
+	//methods
 
-		//aqui deben de parsearse los valores de fecha y las notas
-		//aqui las notas deben reemplazarse los " de las clases en el html por '
+	const handleDatesAndNotesSubmit = (form, onSubmitProps) => {
+		setLoading(true);
+		onSubmitProps.setSubmitting(true);
 
-		onSubmitProps.setSubmitting(false);
+		//process data
+		let values = { nextEvaluationReport: "", nextFollowup: "", notes: "" };
+		values.nextEvaluationReport = dateToString(form.nextEvaluationReport);
+		values.nextFollowup = dateToString(form.nextFollowup);
+		let tempNotes = form.notes.replace('"', "'");
+		values.notes = JSON.stringify({ contents: tempNotes });
+
+		dispatch(
+			patchUser(
+				selectedUser.userId,
+				values,
+				toastRef,
+				onSubmitProps.setSubmitting,
+				setLoading,
+				setSelectedUser
+			)
+		);
 	};
 
 	return (
@@ -253,16 +276,26 @@ const UserDatesAndNotesForm = (props) => {
 								/>
 							</div>
 							{!disabled && (
-								<div className="p-col-12 p-mt-3 p-mb-3">
-									<Button
-										label={customModalButtonText}
-										icon="pi pi-check"
-										className="p-button"
-										type="submit"
-										disabled={isSubmitting}
-										style={{ width: "100%" }}
-									/>
-								</div>
+								<>
+									<div className="p-col-12 p-mt-3 p-mb-3">
+										<Button
+											label={customModalButtonText}
+											icon="pi pi-check"
+											className="p-button"
+											type="submit"
+											disabled={isSubmitting}
+											style={{ width: "100%" }}
+										/>
+									</div>
+									{loading && (
+										<div className="p-col-12 p-mt-1 p-mb-1">
+											<ProgressBar
+												mode="indeterminate"
+												style={{ height: "6px" }}
+											></ProgressBar>
+										</div>
+									)}
+								</>
 							)}
 						</div>
 					</Form>

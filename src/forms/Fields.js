@@ -1,11 +1,11 @@
 import * as yup from "yup";
 
 /* get default validation values and messages from server */
-//aqui falta sacarlo de localsession
+//aqui falta sacarlo de localsession, despues
 var validationUtils = {
 	PROBLEM_TITLE_EMPTY: "El título del problema no puede estar vacío.",
 	ROLES_LIST_NOT_FOUND: "No se encontró el rol especificado.",
-	PROBLEM_DESC_MAX: 150,
+	PROBLEM_DESC_MAX: 300,
 	DATE_PATTERN_REGEX: "^[0-9]{2}[\\/]{1}[0-9]{2}[\\/]{1}[0-9]{4}$",
 	PASS_SYMBOL_REGEX_PATTERN: "[^a-zA-Z\\d\\s]+",
 	EMAIL_REGEX_PATTERN:
@@ -312,12 +312,6 @@ export const updatePasswordBool = {
 		.required(validationUtils.UPDATE_PASS_CONFIRM_EMPTY)
 		.oneOf(validationUtils.BOOLEAN_VALUES, validationUtils.UPDATE_PASS_CONFIRM_INVALID)
 };
-
-//
-
-//aqui estos que siguen hay que checarlos
-
-//
 
 //newPassword textfield
 export const newPassword = {
