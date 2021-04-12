@@ -55,7 +55,7 @@ export const passwordRulesMessageObject = {
 	closable: false,
 	content: (
 		<>
-			<span class="p-message-icon pi  pi-info-circle"></span>
+			<span className="p-message-icon pi  pi-info-circle"></span>
 			<div className="p-ml-2">
 				<p className="p-text-bold p-mb-1">
 					La contraseña debe cumplir con los siguientes requisitos:

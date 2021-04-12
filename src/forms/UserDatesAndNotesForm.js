@@ -25,7 +25,10 @@ const UserDatesAndNotesForm = (props) => {
 		customModalButtonText,
 		userAction,
 		toastRef,
-		setSelectedUser
+		setSelectedUser,
+		therapistId,
+		setSelectedTherapist,
+		fromScreen
 	} = props;
 
 	const [loading, setLoading] = useState(false);
@@ -44,7 +47,7 @@ const UserDatesAndNotesForm = (props) => {
 		let values = { nextEvaluationReport: "", nextFollowup: "", notes: "" };
 		values.nextEvaluationReport = dateToString(form.nextEvaluationReport);
 		values.nextFollowup = dateToString(form.nextFollowup);
-		let tempNotes = form.notes.replace('"', "'");
+		let tempNotes = form.notes.replaceAll('"', "'");
 		values.notes = JSON.stringify({ contents: tempNotes });
 
 		dispatch(
@@ -54,7 +57,10 @@ const UserDatesAndNotesForm = (props) => {
 				toastRef,
 				onSubmitProps.setSubmitting,
 				setLoading,
-				setSelectedUser
+				setSelectedUser,
+				therapistId,
+				setSelectedTherapist,
+				fromScreen
 			)
 		);
 	};
@@ -244,7 +250,7 @@ const UserDatesAndNotesForm = (props) => {
 										toolbar: [
 											[{ header: [1, 2, 3, false] }],
 											[{ font: [] }],
-											[{ color: [] }, { background: [] }],
+											//[{ color: [] }, { background: [] }], aqui despues
 											[{ align: [] }],
 											["bold", "italic", "underline", "strike"],
 											[{ script: "sub" }, { script: "super" }],
@@ -272,7 +278,7 @@ const UserDatesAndNotesForm = (props) => {
 										"indent",
 										"link"
 									]}
-									readOnly={disabled ? true : false}
+									readOnly={disabled}
 								/>
 							</div>
 							{!disabled && (
@@ -303,6 +309,12 @@ const UserDatesAndNotesForm = (props) => {
 			}}
 		</Formik>
 	);
+};
+
+UserDatesAndNotesForm.defaultProps = {
+	therapistId: 0,
+	setSelectedTherapist: null,
+	fromScreen: "users"
 };
 
 export default UserDatesAndNotesForm;

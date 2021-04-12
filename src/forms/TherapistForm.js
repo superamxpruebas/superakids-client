@@ -26,12 +26,12 @@ import ImageUploader from "./ImageUploader";
 import { dateTimeToString, parseDateTime } from "../helpers/Functions";
 import { passwordRulesMessageObject, imagePreviewTitleTherapists } from "../helpers/AppProps";
 import TherapistRoles from "./TherapistRoles";
-import { updateTherapistProfile } from "../actions/therapistActions";
+import { updateTherapistProfile, updateTherapist } from "../actions/therapistActions";
 import { useDispatch } from "react-redux";
 
 //from data
 
-const therapistValidationSchema = yup.object().shape({
+const therapistUpdateValidationSchema = yup.object().shape({
 	[firstName.name]: firstName.validation,
 	[secondName.name]: secondName.validation,
 	[paternalSurname.name]: paternalSurname.validation,
@@ -47,23 +47,25 @@ const therapistValidationSchema = yup.object().shape({
 
 const TherapistForm = (props) => {
 	const {
-		therapistAction,
+		therapistAction, //DETAILS, UPDATE, CREATE
 		usingTherapist,
 		selectedTherapist,
 		customModalButtonText,
-		closeModal,
+		setShowModal,
 		toastRef,
 		therapistInfo,
 		fromProfile,
-		sexOptionsUi
+		sexOptionsUi,
+		setSelectedTherapist
 	} = props;
-	//aqui ver bien como deje userform, en lugar de pasar closemodal, pasar setshowmodal
 
 	const passwordMessage = useRef(null);
 	const accountStateMessageRef = useRef(null);
 	const adminMessageRef = useRef(null);
 
 	const [loading, setLoading] = useState(false);
+	const [adminButtonDisable, setAdminButtonDisable] = useState(false);
+	const [deactivateButtonDisable, setDeactivateButtonDisable] = useState(false);
 
 	const dispatch = useDispatch();
 
@@ -72,18 +74,64 @@ const TherapistForm = (props) => {
 
 	// methods
 
+	const initialValues = () => {
+		/*return therapistAction === "CREATE"
+			? therapistCreateInitialValues - aqui despues */
+		return {
+			[email.name]: usingTherapist.email,
+			[firstName.name]: usingTherapist.firstName,
+			[secondName.name]: usingTherapist.secondName,
+			[paternalSurname.name]: usingTherapist.paternalSurname,
+			[maternalSurname.name]: usingTherapist.maternalSurname,
+			[updatePasswordBool.name]: updatePasswordBool.default,
+			[oldPassword.name]: oldPassword.default,
+			[newPassword.name]: newPassword.default,
+			[newPasswordConfirm.name]: newPasswordConfirm.default,
+			[sex.name]: usingTherapist.sex,
+			[accountState.name]: usingTherapist.accountState,
+			[updateRolesBool.name]: updateRolesBool.default,
+			[roleIds.name]: usingTherapist.roleDtos.map((roleDto) => roleDto.therapistRoleId)
+		};
+	};
+
+	const validationSchema = () => {
+		/* return therapistAction === "CREATE"
+			? therapistSignupValidationSchema - aqui despues */
+		return therapistUpdateValidationSchema;
+	};
+
+	const closeModal = () => {
+		setLoading(false);
+		setShowModal(false);
+		setTimeout(() => {
+			if (!fromProfile && setSelectedTherapist) setSelectedTherapist(null);
+		}, 1000);
+	};
+
 	const handleTherapistSubmit = (form, onSubmitProps) => {
 		setLoading(true);
 		onSubmitProps.setSubmitting(true);
 		if (isSelf) {
 			dispatch(
-				updateTherapistProfile(form, selectedTherapist.therapistId, closeModal, toastRef)
+				updateTherapistProfile(
+					form,
+					selectedTherapist.therapistId,
+					closeModal,
+					toastRef,
+					onSubmitProps.setSubmitting
+				)
 			);
 		} else {
-			//aqui falta
+			dispatch(
+				updateTherapist(
+					form,
+					selectedTherapist.therapistId,
+					closeModal,
+					toastRef,
+					onSubmitProps.setSubmitting
+				)
+			);
 		}
-		setLoading(false);
-		onSubmitProps.setSubmitting(false);
 	};
 
 	const showPasswordMessage = (show) => {
@@ -106,24 +154,8 @@ const TherapistForm = (props) => {
 				mode={isSelf ? "self" : "therapist"}
 			/>
 			<Formik
-				initialValues={{
-					[email.name]: usingTherapist.email,
-					[firstName.name]: usingTherapist.firstName,
-					[secondName.name]: usingTherapist.secondName,
-					[paternalSurname.name]: usingTherapist.paternalSurname,
-					[maternalSurname.name]: usingTherapist.maternalSurname,
-					[updatePasswordBool.name]: updatePasswordBool.default,
-					[oldPassword.name]: oldPassword.default,
-					[newPassword.name]: newPassword.default,
-					[newPasswordConfirm.name]: newPasswordConfirm.default,
-					[sex.name]: usingTherapist.sex,
-					[accountState.name]: usingTherapist.accountState,
-					[updateRolesBool.name]: updateRolesBool.default,
-					[roleIds.name]: usingTherapist.roleDtos.map(
-						(roleDto) => roleDto.therapistRoleId
-					)
-				}}
-				validationSchema={therapistValidationSchema}
+				initialValues={initialValues()}
+				validationSchema={validationSchema()}
 				onSubmit={handleTherapistSubmit}
 				isInitialValid={false}
 			>
@@ -291,42 +323,56 @@ const TherapistForm = (props) => {
 												selectedTherapist={selectedTherapist}
 												adminMessageRef={adminMessageRef}
 												disabled={disabled}
+												adminButtonDisable={adminButtonDisable}
+												setAdminButtonDisable={setAdminButtonDisable}
 											/>
-											<Messages ref={adminMessageRef}></Messages>
-											<div
-												className="p-col-12"
-												style={{
-													padding: "0px 10px"
-												}}
-											>
-												<label>Fecha de afilicación: </label>
-												<span>
-													{selectedTherapist &&
-														" " +
-															dateTimeToString(
-																parseDateTime(
-																	selectedTherapist.addedDate
-																)
-															)}
-												</span>
+											<div className="p-col-12">
+												<Messages ref={adminMessageRef}></Messages>
 											</div>
-											<div
-												className="p-col-12"
-												style={{
-													padding: "0px 10px"
-												}}
-											>
-												<label>Fecha de creación de cuenta: </label>
-												<span>
-													{selectedTherapist &&
-														" " +
-															dateTimeToString(
-																parseDateTime(
-																	selectedTherapist.createdDate
-																)
-															)}
-												</span>
-											</div>
+											{therapistAction === "DETAILS" && (
+												<>
+													<div
+														className="p-col-12"
+														style={{
+															padding: "0px 10px"
+														}}
+													>
+														<label>
+															<strong>Fecha de afilicación: </strong>
+														</label>
+														<span>
+															{selectedTherapist &&
+																" " +
+																	dateTimeToString(
+																		parseDateTime(
+																			selectedTherapist.addedDate
+																		)
+																	)}
+														</span>
+													</div>
+													<div
+														className="p-col-12"
+														style={{
+															padding: "0px 10px"
+														}}
+													>
+														<label>
+															<strong>
+																Fecha de creación de cuenta:{" "}
+															</strong>
+														</label>
+														<span>
+															{selectedTherapist &&
+																" " +
+																	dateTimeToString(
+																		parseDateTime(
+																			selectedTherapist.createdDate
+																		)
+																	)}
+														</span>
+													</div>
+												</>
+											)}
 										</>
 									)}
 								{therapistAction === "UPDATE" && !isSelf && !fromProfile && (
@@ -337,20 +383,24 @@ const TherapistForm = (props) => {
 												icon="pi pi-lock"
 												className="p-button p-button-danger"
 												type="button"
+												disabled={deactivateButtonDisable}
 												onClick={(e) => {
 													setFieldValue(accountState.name, "Desactivada");
+													setDeactivateButtonDisable(true);
 													accountStateMessageRef.current.show({
 														severity: "info",
 														summary: "",
 														detail:
 															"Se desactivará la cuenta al guardar Terapeuta.",
-														closable: true,
+														closable: false,
 														sticky: true
 													});
 												}}
 											/>
 										</div>
-										<Messages ref={accountStateMessageRef}></Messages>
+										<div className="p-col-12">
+											<Messages ref={accountStateMessageRef}></Messages>
+										</div>
 									</>
 								)}
 								{!disabled && (
@@ -365,6 +415,8 @@ const TherapistForm = (props) => {
 													showPasswordMessage(false);
 													accountStateMessageRef.current.clear();
 													adminMessageRef.current.clear();
+													setAdminButtonDisable(false);
+													setDeactivateButtonDisable(false);
 												}}
 											/>
 										</div>
@@ -377,14 +429,14 @@ const TherapistForm = (props) => {
 												disabled={!isValid || isSubmitting || loading}
 											/>
 										</div>
-										<div className="p-col-12 p-mt-1 p-mb-1">
-											{loading && (
+										{loading && (
+											<div className="p-col-12 p-mt-1 p-mb-1">
 												<ProgressBar
 													mode="indeterminate"
 													style={{ height: "6px" }}
 												></ProgressBar>
-											)}
-										</div>
+											</div>
+										)}
 									</>
 								)}
 							</div>

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import { Card, Col, Container, Row } from "react-bootstrap";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -26,7 +26,7 @@ const Dashboard = ({ history }) => {
 		{
 			id: 2,
 			title: "Administración de Terapeutas",
-			path: "/administracion",
+			path: "/administration",
 			img: "https://placehold.jp/286x180.png",
 			subText: false,
 			adminOnly: true

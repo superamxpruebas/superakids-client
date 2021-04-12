@@ -52,7 +52,7 @@ const AccountDetails = ({ therapistInfo }) => {
 				</h5>
 				<p style={{ marginBottom: "10px" }}>{loggedTherapist.email}</p>
 				<p style={{ marginBottom: "10px" }}>
-					Fecha de afilicación: <br />
+					Fecha de afilicación: <br /*aqui despues - importar desde Fields*/ />
 					{loggedTherapist.addedDate}
 				</p>
 				<p style={{ marginBottom: "10px" }}>
@@ -91,10 +91,10 @@ const AccountDetails = ({ therapistInfo }) => {
 							usingTherapist={loggedTherapist}
 							selectedTherapist={loggedTherapist}
 							customModalButtonText="Guardar Cambios"
-							closeModal={closeModal}
+							setShowModal={setShowModal}
 							toastRef={toastRef}
 							therapistInfo={loggedTherapist}
-							fromProfile={true}
+							fromProfile
 							sexOptionsUi={sexOptionsUi}
 						/>
 					</Tab>

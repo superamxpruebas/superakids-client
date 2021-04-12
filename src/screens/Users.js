@@ -593,6 +593,7 @@ const Users = ({ history }) => {
 							userAction={userAction}
 							setSelectedUser={setSelectedUser}
 							toastRef={toastRef}
+							fromScreen="users"
 						/>
 					</Tab>
 				</Tabs>

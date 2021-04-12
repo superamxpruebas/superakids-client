@@ -108,10 +108,6 @@ export const currentYearRange = () => {
 
 export const addDateAndNotesObjectsTo = (tempUsers) => {
 	return tempUsers.map((user, i) => {
-		/*user.nextFollowupDate = parseDate(user.nextFollowup);
-		user.nextEvaluationReportDate = parseDate(user.nextEvaluationReport);
-		let tempObj = JSON.parse(user.notes);
-		user.notesContents = tempObj.contents;*/
 		return addDateAndNotesObjectsToOnly(user);
 	});
 };
@@ -122,4 +118,21 @@ export const addDateAndNotesObjectsToOnly = (user) => {
 	let tempObj = JSON.parse(user.notes);
 	user.notesContents = tempObj.contents;
 	return user;
+};
+
+export const addDateObjectsAndUsersTo = (tempTherapists) => {
+	return tempTherapists.map((therapist, i) => {
+		return addDateObjectsAndUsersToOnly(therapist);
+	});
+};
+
+export const addDateObjectsAndUsersToOnly = (therapist) => {
+	therapist.users = [];
+	therapist.lastSessionDate = parseDateTime(therapist.lastSession);
+	return therapist;
+};
+
+export const addDateObjectsToOnly = (therapist) => {
+	therapist.lastSessionDate = parseDateTime(therapist.lastSession);
+	return therapist;
 };

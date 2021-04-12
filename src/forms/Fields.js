@@ -107,7 +107,7 @@ var validationUtils = {
 	IMAGE_FORMAT_VALUES: ["gif", "GIF", "png", "PNG", "jpg", "JPG", "jpeg", "JPEG"],
 	EDUCATION_INVALID: "Valor incorrecto para educación.",
 	PROBLEM_VIEW_TOOLONG: "La vista del problema no debe ser mayor a 25 caracteres.",
-	EMAILS_LIST_MAX: 25,
+	EMAILS_LIST_MAX: 10,
 	ROLES_MAX_NUMBER: 10,
 	ACTIVITYEXERCISE_ID_INVALID:
 		"ID de Ejercicio de Actividad no fué proporcionado o es un valor inválido.",
@@ -190,10 +190,47 @@ export const fullName = {
 	label: "Nombre Completo",
 	placeholder: "Nombre Completo"
 };
+
 export const yearsOld = {
 	name: "yearsOld",
 	label: "Edad",
 	placeholder: "Edad"
+};
+
+export const createdDate = {
+	name: "createdDate",
+	label: "Fecha de Creación de Cuenta",
+	placeholder: "Fecha de Creación de Cuenta"
+};
+
+export const addedDate = {
+	name: "addedDate",
+	label: "Fecha de Afilación",
+	placeholder: "Fecha de Afilación"
+};
+
+export const lastSession = {
+	name: "lastSession",
+	label: "Última Sesión",
+	placeholder: "Última Sesión"
+};
+
+export const loginAttempts = {
+	name: "loginAttempts",
+	label: "Intentos de Inicio de Sesión",
+	placeholder: "Intentos de Inicio de Sesión"
+};
+
+export const isAdmin = {
+	name: "isAdmin",
+	label: "Es Administrador",
+	placeholder: "Es Administrador"
+};
+
+export const users = {
+	name: "users",
+	label: "Usuarios de Terapeuta",
+	placeholder: "Usuarios de Terapeuta"
 };
 
 /* ------------------ fields ------------------ */
@@ -331,7 +368,7 @@ export const newPassword = {
 				.min(validationUtils.PASS_MIN_LENGTH, validationUtils.PASS_BAD_LENGTH)
 				.max(validationUtils.PASS_MAX_LENGTH, validationUtils.PASS_BAD_LENGTH)
 				.test("passwordsNoMatch", validationUtils.PASS_OLD_NEW_SAME, (value, context) => {
-					return !value.match(context.parent[oldPassword.name]);
+					return value !== context.parent[oldPassword.name];
 				})
 				.test("passwordHasDigit", validationUtils.PASS_MISS_DIGIT, (value, context) => {
 					return value.search(digitRegex) !== -1;
@@ -345,6 +382,25 @@ export const newPassword = {
 				.test("passwordHasLower", validationUtils.PASS_MISS_LOWER, (value, context) => {
 					return value.search(lowerCaseRegex) !== -1;
 				})
+		}),
+	signupName: "password",
+	signupValidation: yup
+		.string()
+		.default(emptyStringDefault)
+		.required(validationUtils.PASS_EMPTY)
+		.min(validationUtils.PASS_MIN_LENGTH, validationUtils.PASS_BAD_LENGTH)
+		.max(validationUtils.PASS_MAX_LENGTH, validationUtils.PASS_BAD_LENGTH)
+		.test("passwordHasDigit", validationUtils.PASS_MISS_DIGIT, (value, context) => {
+			return value.search(digitRegex) !== -1;
+		})
+		.test("passwordHasSymbol", validationUtils.PASS_MISS_SYMBOL, (value, context) => {
+			return value.search(symbolRegex) !== -1;
+		})
+		.test("passwordHasUpper", validationUtils.PASS_MISS_UPPER, (value, context) => {
+			return value.search(upperCaseRegex) !== -1;
+		})
+		.test("passwordHasLower", validationUtils.PASS_MISS_LOWER, (value, context) => {
+			return value.search(lowerCaseRegex) !== -1;
 		})
 };
 
@@ -364,8 +420,16 @@ export const newPasswordConfirm = {
 				.default(emptyStringDefault)
 				.required(validationUtils.UPDATE_PASS_CONFIRM_EMPTY)
 				.test("passwordsMatch", validationUtils.PASS_NO_MATCH, (value, context) => {
-					return value.match(newPassword.name);
+					return value === context.parent[newPassword.name]; //aqui checar bien
 				})
+		}),
+	signupName: "passwordConfirm",
+	signupValidation: yup
+		.string()
+		.default(emptyStringDefault)
+		.required(validationUtils.UPDATE_PASS_CONFIRM_EMPTY)
+		.test("passwordsMatch", validationUtils.PASS_NO_MATCH, (value, context) => {
+			return value === context.parent[newPassword.signupName];
 		})
 };
 
@@ -403,26 +467,37 @@ export const nextEvaluationReport = {
 	validation: yup.date().optional()
 };
 
-//emails  textfield (string[])
+//password  textfield (string)
+export const password = {
+	name: "password",
+	default: emptyStringDefault,
+	label: "Contraseña",
+	placeholder: "Contraseña",
+	validation: yup
+		.string()
+		.default(emptyStringDefault)
+		.required("La contraseña no puede estar vacía.")
+};
+
+//emails textfield (string[])
 export const emails = {
 	name: "emails",
 	default: emptyArray,
-	label: "Correos Electrónicos de Terapeutas",
-	placeholder: "Correos Electrónicos de Terapeutas",
-	//aqui a ver si funciona asi; si no hay valor esta bien y si hay que cheque con regex
+	label: "Direcciones de correo electrónico de Terapeuta(s)",
+	placeholder: "Direcciones de correo electrónico de Terapeuta(s)",
 	validation: yup
 		.array()
 		.default(emptyArray)
-		.required()
 		.of(
 			yup
 				.string()
+				.default(emptyStringDefault)
 				.email(validationUtils.EMAILS_LIST_BAD_FORMAT)
 				.max(validationUtils.EMAIL_MAX_LENGTH, validationUtils.EMAILS_LIST_VALUE_TOOLONG)
 		)
 		.test("isEmpty", validationUtils.EMAILS_LIST_EMPTY, (value, context) => {
 			return value.length !== 0;
-		}) //aqui checar que funcione test
+		})
 		.max(validationUtils.EMAILS_LIST_MAX, validationUtils.EMAILS_LIST_TOOLONG)
 };
 

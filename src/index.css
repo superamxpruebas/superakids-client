@@ -389,3 +389,17 @@ a > div.card-title.h5 {
 	font-weight: 700;
 	color: #3067c7; /*#053994*/
 }
+
+/* ------- invite screen -------- */
+
+.center-spinner {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.add-align-form {
+	padding-top: 50px;
+	padding-bottom: 50px;
+	text-align: left;
+}

@@ -94,7 +94,7 @@ const UserForm = (props) => {
 					photoUrl={selectedUser ? selectedUser.imageUrl : null}
 					imagePreviewTitle={imagePreviewTitleUsers}
 					disabled={disabled}
-					id={selectedUser.userId}
+					id={selectedUser ? selectedUser.userId : 0}
 					toastRef={toastRef}
 					closeModal={closeModal}
 					mode="user"

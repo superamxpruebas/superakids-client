@@ -1,5 +1,6 @@
 import axios from "axios";
 import { USER_LIST_REQUEST, USER_LIST_SUCCESS, USER_LIST_FAIL } from "../constants/userConstants";
+import { THERAPIST_LIST_SUCCESS } from "../constants/therapistConstants";
 import {
 	apiURL,
 	apiVersion,
@@ -55,6 +56,63 @@ export const getUsersList = (therapistId, toastRef) => async (dispatch) => {
 			severity: "error",
 			summary: severityTitles["error"],
 			detail: "Error obteniendo usuarios.",
+			sticky: true,
+			closable: true
+		});
+	}
+};
+
+export const getUsersListFor = (
+	therapistId,
+	toastRef,
+	setLoadingUsers,
+	setSelectedTherapist
+) => async (dispatch) => {
+	const config = {
+		headers: {
+			"Content-Type": "application/json"
+		},
+		withCredentials: true,
+		params: {
+			therapistId: therapistId
+		}
+	};
+
+	try {
+		await axios
+			.get(apiURL + apiVersion + usersEndpoint, config)
+			.then((response) => {
+				let usersOfTherapist = addDateAndNotesObjectsTo(response.data.subBody);
+				let therapists = JSON.parse(sessionStorage.getItem("therapists" + storageCode));
+				const therapistIndex = therapists
+					.map((therapist) => therapist.therapistId)
+					.indexOf(therapistId);
+				let therapist = therapists[therapistIndex];
+				therapist.users = usersOfTherapist;
+				therapists[therapistIndex] = therapist;
+				setSelectedTherapist(therapist);
+				sessionStorage.setItem("therapists" + storageCode, JSON.stringify(therapists));
+				dispatch({
+					type: THERAPIST_LIST_SUCCESS,
+					payload: therapists
+				});
+				setLoadingUsers(false);
+			})
+			.catch((error) => {
+				setLoadingUsers(false);
+				if (error.response.status === 401) {
+					dispatch(logout());
+					return;
+				}
+			});
+	} catch (error) {
+		console.log(error, "getUsersListFor");
+		setLoadingUsers(false);
+		toastRef.current.clear();
+		toastRef.current.show({
+			severity: "error",
+			summary: severityTitles["error"],
+			detail: "Error obteniendo usuarios para terapeuta.",
 			sticky: true,
 			closable: true
 		});
@@ -227,7 +285,10 @@ export const patchUser = (
 	toastRef,
 	setSubmitting,
 	setLoading,
-	setSelectedUser
+	setSelectedUser,
+	therapistId,
+	setSelectedTherapist,
+	fromScreen //therapists, users
 ) => async (dispatch) => {
 	const config = {
 		headers: {
@@ -241,18 +302,36 @@ export const patchUser = (
 			.patch(apiURL + apiVersion + usersEndpoint + "/" + userId, form, config)
 			.then((response) => {
 				let tempUser = addDateAndNotesObjectsToOnly(response.data.subBody);
-				let users = JSON.parse(sessionStorage.getItem("users" + storageCode));
-				const userIndex = users.map((user) => user.userId).indexOf(userId);
-				users[userIndex] = tempUser;
-				sessionStorage.setItem("users" + storageCode, JSON.stringify(users));
-				dispatch({
-					type: USER_LIST_SUCCESS,
-					payload: users
-				});
+				if (fromScreen === "users") {
+					let users = JSON.parse(sessionStorage.getItem("users" + storageCode));
+					const userIndex = users.map((user) => user.userId).indexOf(userId);
+					users[userIndex] = tempUser;
+					sessionStorage.setItem("users" + storageCode, JSON.stringify(users));
+					dispatch({
+						type: USER_LIST_SUCCESS,
+						payload: users
+					});
+				}
+				if (fromScreen === "therapists") {
+					let therapists = JSON.parse(sessionStorage.getItem("therapists" + storageCode));
+					const therapistIndex = therapists
+						.map((therapist) => therapist.therapistId)
+						.indexOf(therapistId);
+					let therapist = therapists[therapistIndex];
+					const userIndex = therapist.users.map((user) => user.userId).indexOf(userId);
+					therapist.users[userIndex] = tempUser;
+					therapists[therapistIndex] = therapist;
+					setSelectedTherapist(therapist);
+					sessionStorage.setItem("therapists" + storageCode, JSON.stringify(therapists));
+					dispatch({
+						type: THERAPIST_LIST_SUCCESS,
+						payload: therapists
+					});
+				}
 
+				setSelectedUser(tempUser);
 				setLoading(false);
 				setSubmitting(false);
-				setSelectedUser(tempUser);
 				toastRef.current.clear();
 				toastRef.current.show({
 					severity: response.data.severity,
@@ -263,9 +342,11 @@ export const patchUser = (
 				});
 			})
 			.catch((error) => {
-				if (error.response.status === 401) {
-					dispatch(logout());
-					return;
+				if (error.response) {
+					if (error.response.status === 401) {
+						dispatch(logout());
+						return;
+					}
 				}
 			});
 	} catch (error) {
