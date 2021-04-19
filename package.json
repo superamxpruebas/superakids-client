@@ -1,8 +1,7 @@
 {
 	"homepage": "https://superamxpruebas.github.io/superakids-client/",
 	"name": "superakids-client",
-	"version": "0.1.0",
-	"private": true,
+	"version": "1.0.0",
 	"dependencies": {
 		"@ckeditor/ckeditor5-build-classic": "^25.0.0",
 		"@ckeditor/ckeditor5-react": "^3.0.0",
