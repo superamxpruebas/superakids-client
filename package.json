@@ -1,5 +1,4 @@
 {
-	"homepage": "https://superamxpruebas.github.io/superakids-client/",
 	"name": "superakids-client",
 	"version": "1.0.0",
 	"dependencies": {
@@ -34,8 +33,6 @@
 		"yup": "^0.32.8"
 	},
 	"scripts": {
-		"predeploy": "npm run build",
-		"deploy": "gh-pages -b develop -d build",
 		"start": "react-scripts start",
 		"build": "react-scripts build",
 		"test": "react-scripts test",
