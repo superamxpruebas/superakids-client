@@ -26,6 +26,7 @@ const UserDatesAndNotesForm = (props) => {
 		userAction,
 		toastRef,
 		setSelectedUser,
+		setUsingDatesAndNotes,
 		therapistId,
 		setSelectedTherapist,
 		fromScreen
@@ -58,6 +59,7 @@ const UserDatesAndNotesForm = (props) => {
 				onSubmitProps.setSubmitting,
 				setLoading,
 				setSelectedUser,
+				setUsingDatesAndNotes,
 				therapistId,
 				setSelectedTherapist,
 				fromScreen

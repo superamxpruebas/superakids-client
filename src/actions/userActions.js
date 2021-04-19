@@ -10,6 +10,7 @@ import {
 } from "../helpers/AppProps";
 import { addDateAndNotesObjectsTo, addDateAndNotesObjectsToOnly } from "../helpers/Functions";
 import { logout } from "./therapistActions";
+import { nextFollowup, nextEvaluationReport, notes } from "../forms/Fields";
 
 export const getUsersList = (therapistId, toastRef) => async (dispatch) => {
 	dispatch({
@@ -286,6 +287,7 @@ export const patchUser = (
 	setSubmitting,
 	setLoading,
 	setSelectedUser,
+	setUsingDatesAndNotes,
 	therapistId,
 	setSelectedTherapist,
 	fromScreen //therapists, users
@@ -330,6 +332,15 @@ export const patchUser = (
 				}
 
 				setSelectedUser(tempUser);
+				setUsingDatesAndNotes({
+					[nextFollowup.name]: tempUser.nextFollowupDate
+						? new Date(tempUser.nextFollowupDate)
+						: null,
+					[nextEvaluationReport.name]: tempUser.nextEvaluationReportDate
+						? new Date(tempUser.nextEvaluationReportDate)
+						: null,
+					[notes.name]: tempUser.notesContents
+				});
 				setLoading(false);
 				setSubmitting(false);
 				toastRef.current.clear();

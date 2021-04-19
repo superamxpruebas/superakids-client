@@ -17,10 +17,6 @@ const Login = ({ history }) => {
 	const therapistLogin = useSelector((state) => state.therapistLogin);
 	const { therapistInfo } = therapistLogin;
 
-	if (therapistInfo) {
-		history.push("/");
-	}
-
 	useEffect(() => {
 		let doLogout = sessionStorage.getItem("logoutAction" + storageCode);
 		if (doLogout) {
@@ -37,18 +33,38 @@ const Login = ({ history }) => {
 					]);
 				})
 				.catch((error) => {
-					errorMessage.current.replace([
-						{
-							severity: error.response.data.severity || "error",
-							detail: error.response.data.message || "Ocurrió un error interno :(",
-							sticky: true,
-							closable: false
-						}
-					]);
+					if (error.response) {
+						errorMessage.current.replace([
+							{
+								severity: error.response.data.severity || "error",
+								detail:
+									error.response.data.message || "Ocurrió un error interno :(",
+								sticky: true,
+								closable: false
+							}
+						]);
+					} else {
+						console.log("doLogout - catch - final error");
+						console.log(error, "error");
+						console.log(error.message, "error message");
+						errorMessage.current.replace([
+							{
+								severity: "error",
+								detail: "Ocurrió un error interno :(",
+								sticky: true,
+								closable: false
+							}
+						]);
+					}
 				});
 			sessionStorage.removeItem("logoutAction" + storageCode);
 		}
 	}, []);
+
+	if (therapistInfo) {
+		history.push("/");
+		return <></>;
+	}
 
 	//methods
 

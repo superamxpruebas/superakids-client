@@ -5,10 +5,14 @@ This file contains constants and default values used throught the whole applicat
 */
 
 //app version
-export const AppVersion = "1.0.1"; //last updated 15/mar/2020
+export const AppVersion = "1.0.0";
 
-//api url
-export const apiURL = "http://localhost:8080"; //aqui hay que estar modificando
+//api url - aqui hay que estar modificando
+//export const apiURL = "http://localhost:8080";
+//export const apiURL = "http://localhost:5000";
+//export const apiURL = "http://superakidsapi-env.eba-9m3wkmut.us-east-2.elasticbeanstalk.com";
+export const apiURL = "https://superakids.com";
+
 //api version
 export const apiVersion = "/api/v1";
 

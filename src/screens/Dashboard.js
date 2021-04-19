@@ -12,6 +12,7 @@ const Dashboard = ({ history }) => {
 
 	if (!therapistInfo) {
 		history.push("/login");
+		return <></>;
 	}
 
 	const apps = [

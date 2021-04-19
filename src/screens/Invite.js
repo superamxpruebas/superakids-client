@@ -51,10 +51,6 @@ const Invite = ({ history, match }) => {
 	const therapistLogin = useSelector((state) => state.therapistLogin);
 	const { therapistInfo } = therapistLogin;
 
-	if (therapistInfo) {
-		history.push("/");
-	}
-
 	// ui state
 	const [submitLoading, setSubmitLoading] = useState(false);
 	const [step, setStep] = useState("LOADING"); //LOADING, CONTINUE, ERROR, FORM, FINISH
@@ -93,6 +89,11 @@ const Invite = ({ history, match }) => {
 				}
 			});
 	}, [uuid]);
+
+	if (therapistInfo) {
+		history.push("/");
+		return <></>;
+	}
 
 	// methods
 

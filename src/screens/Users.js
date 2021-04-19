@@ -79,246 +79,22 @@ const Users = ({ history }) => {
 	); //aqui despues
 	const sexOptionsUi = useRef(stringArrayToPRSelectObjects(["Hombre", "Mujer"])); //aqui despues
 
-	const birthdayYearRangeRef = useRef("");
-	const twoYearRangeRef = useRef("");
-	const presentYearRef = useRef(new Date());
-	const nextYearRef = useRef(new Date());
-	const todayDateRef = useRef(new Date());
-	const tomorrowDateRef = useRef(new Date());
+	const birthdayYearRangeRef = useRef(currentYearRange());
+	const twoYearRangeRef = useRef(getTwoYearRange());
+	const presentYearRef = useRef(getPresentYear());
+	const nextYearRef = useRef(getNextYear());
+	const todayDateRef = useRef(getTodayDate());
+	const tomorrowDateRef = useRef(getTomorrowFrom(todayDateRef.current.getTime()));
 
 	const dispatch = useDispatch();
 	const { therapistInfo } = useSelector((state) => state.therapistLogin);
 	const { loadingUsers, users } = useSelector((state) => state.users);
 
-	if (!therapistInfo) {
-		history.push("/login");
-	}
-
 	useEffect(() => {
-		if (users.length === 0) dispatch(getUsersList(therapistInfo.therapistId, toastRef));
-
-		//initialize attributes only once
-		birthdayYearRangeRef.current = currentYearRange();
-		twoYearRangeRef.current = getTwoYearRange();
-		presentYearRef.current = getPresentYear();
-		nextYearRef.current = getNextYear();
-		todayDateRef.current = getTodayDate();
-		tomorrowDateRef.current = getTomorrowFrom(todayDateRef.current.getTime());
+		if (therapistInfo) {
+			if (users.length === 0) dispatch(getUsersList(therapistInfo.therapistId, toastRef));
+		}
 		// eslint-disable-next-line
-	}, []);
-
-	//aqui lo voy a dejar por mientras
-	useEffect(() => {
-		//aqui falta, usersService se obtiene de redux o algo
-		/*let usersService2 = [
-			{
-				userId: 1,
-				therapistId: 1,
-				firstName: "josué",
-				secondName: "",
-				paternalSurname: "moralesññññ",
-				maternalSurname: "ornelaééééáús",
-				education: "1er Año de Preescolar",
-				sex: "Hombre",
-				birthday: "20/02/1996",
-				addedDate: "05/10/2020 00:45:32",
-				imageUrl: null,
-				//notes: '{"contents":""}',
-				notes:
-					"{\"contents\":\"<p>ksksksksksksksk</p><p><br></p><p><br></p><p>algo</p><p><strong> con estiloddd</strong>d<strong>d</strong></p><p><strong>ddddd</strong></p><p><br></p><p><br></p><p><strong class='ql-font-serif'>ddddddd</strong></p><p><br></p><p><br></p><p><strong class='ql-font-serif' style='background-color: rgb(255, 255, 0);'>hola </strong><strong style='color: rgb(73, 80, 87); background-color: rgb(255, 255, 0);'>hola hola hola hola hola </strong></p>\"}",
-				nextFollowup: "30/12/2020",
-				nextEvaluationReport: "30/12/2020",
-				yearsOld: 24,
-				next5DaysForEvaluationReport: "04/01/2021",
-				next5DaysForFollowup: "04/01/2021",
-				fullName: "josué  moralesññññ ornelaééééáús"
-			}
-		]; //aqui quitar
-		let usersService = [
-			{
-				userId: 1,
-				therapistId: 1,
-				firstName: "josué",
-				secondName: "",
-				paternalSurname: "moralesññññ",
-				maternalSurname: "ornelaééééáús",
-				education: "1er Año de Preescolar",
-				sex: "Hombre",
-				birthday: "20/02/1996",
-				addedDate: "05/10/2020 00:45:32",
-				imageUrl: null,
-				notes:
-					'{\'contents\':\'<p>ksksksksksksksk</p><p><br></p><p><br></p><p>algo</p><p><strong> con estiloddd</strong>d<strong>d</strong></p><p><strong>ddddd</strong></p><p><br></p><p><br></p><p><strong class="ql-font-serif">ddddddd</strong></p><p><br></p><p><br></p><p><strong class="ql-font-serif" style="background-color: rgb(255, 255, 0);">hola </strong><strong style="color: rgb(73, 80, 87); background-color: rgb(255, 255, 0);">hola hola hola hola hola </strong></p>\'}',
-				nextFollowup: "30/12/2020",
-				nextEvaluationReport: "30/12/2020",
-				yearsOld: 24,
-				next5DaysForEvaluationReport: "04/01/2021",
-				next5DaysForFollowup: "04/01/2021",
-				fullName: "josué  moralesññññ ornelaééééáús"
-			},
-			{
-				userId: 2,
-				therapistId: 1,
-				firstName: "hector",
-				secondName: "",
-				paternalSurname: "hernández",
-				maternalSurname: "ornelas",
-				education: "prepa",
-				sex: "Hombre",
-				birthday: "12/02/1996",
-				addedDate: "05/10/2020 00:45:32",
-				imageUrl:
-					"https://s3.us-east-2.amazonaws.com/superakids-bucket/user/img/user-2.gif",
-				notes: '{"contents": "<p>string con áéúgh y ññññ jeje</p>"}',
-				nextFollowup: "03/06/2019",
-				nextEvaluationReport: "12/02/2025",
-				yearsOld: 24,
-				next5DaysForEvaluationReport: "17/02/2025",
-				next5DaysForFollowup: "08/06/2019",
-				fullName: "hector hernández ornelas"
-			},
-			{
-				userId: 4,
-				therapistId: 1,
-				firstName: "eefefeijefij",
-				secondName: "",
-				paternalSurname: "morales",
-				maternalSurname: "ornelas",
-				education: "1er Año de Preescolar",
-				sex: "Hombre",
-				birthday: "12/02/1996",
-				addedDate: "19/10/2020 22:13:51",
-				imageUrl: null,
-				notes: '{"contents": "<p>string con áéúgh y ññññ jeje</p>"}',
-				nextFollowup: "15/12/2020",
-				nextEvaluationReport: "22/11/2020",
-				yearsOld: 1,
-				next5DaysForEvaluationReport: "27/11/2020",
-				next5DaysForFollowup: "20/12/2020",
-				fullName: "eefefeijefij  morales ornelas"
-			},
-			{
-				userId: 5,
-				therapistId: 1,
-				firstName: "eefefeijefij",
-				secondName: "",
-				paternalSurname: "morales",
-				maternalSurname: "ornelas",
-				education: "1er Año de Preescolar",
-				sex: "Hombre",
-				birthday: "12/02/1996",
-				addedDate: "19/10/2020 22:13:51",
-				imageUrl: null,
-				notes: '{"contents": "<p>string con áéúgh y ññññ jeje</p>"}',
-				nextFollowup: "15/12/2020",
-				nextEvaluationReport: "22/11/2020",
-				yearsOld: 1,
-				next5DaysForEvaluationReport: "27/11/2020",
-				next5DaysForFollowup: "20/12/2020",
-				fullName: "eefefeijefij  morales ornelas"
-			},
-			{
-				userId: 6,
-				therapistId: 1,
-				firstName: "eefefeijefij",
-				secondName: "",
-				paternalSurname: "morales",
-				maternalSurname: "ornelas",
-				education: "1er Año de Preescolar",
-				sex: "Hombre",
-				birthday: "12/02/1996",
-				addedDate: "19/10/2020 22:13:51",
-				imageUrl: null,
-				notes: '{"contents": ""}',
-				nextFollowup: "15/12/2020",
-				nextEvaluationReport: "22/11/2020",
-				yearsOld: 1,
-				next5DaysForEvaluationReport: "27/11/2020",
-				next5DaysForFollowup: "20/12/2020",
-				fullName: "eefefeijefij  morales ornelas"
-			},
-			{
-				userId: 7,
-				therapistId: 1,
-				firstName: "eefefeijefij",
-				secondName: "",
-				paternalSurname: "morales",
-				maternalSurname: "ornelas",
-				education: "1er Año de Preescolar",
-				sex: "Hombre",
-				birthday: "12/02/1996",
-				addedDate: "19/10/2020 22:13:51",
-				imageUrl: null,
-				notes: '{"contents": ""}',
-				nextFollowup: "15/12/2020",
-				nextEvaluationReport: "22/11/2020",
-				yearsOld: 1,
-				next5DaysForEvaluationReport: "27/11/2020",
-				next5DaysForFollowup: "20/12/2020",
-				fullName: "eefefeijefij  morales ornelas"
-			},
-			{
-				userId: 8,
-				therapistId: 1,
-				firstName: "eefefeijefij",
-				secondName: "",
-				paternalSurname: "morales",
-				maternalSurname: "ornelas",
-				education: "1er Año de Preescolar",
-				sex: "Hombre",
-				birthday: "12/02/1996",
-				addedDate: "19/10/2020 22:13:51",
-				imageUrl: null,
-				notes: '{"contents": ""}',
-				nextFollowup: "15/12/2020",
-				nextEvaluationReport: "22/11/2020",
-				yearsOld: 1,
-				next5DaysForEvaluationReport: "27/11/2020",
-				next5DaysForFollowup: "20/12/2020",
-				fullName: "eefefeijefij  morales ornelas"
-			},
-			{
-				userId: 9,
-				therapistId: 1,
-				firstName: "eefefeijefij",
-				secondName: "",
-				paternalSurname: "morales",
-				maternalSurname: "ornelas",
-				education: "1er Año de Preescolar",
-				sex: "Hombre",
-				birthday: "12/02/1996",
-				addedDate: "19/10/2020 22:13:51",
-				imageUrl: null,
-				notes: '{"contents": ""}',
-				nextFollowup: "15/12/2020",
-				nextEvaluationReport: "22/11/2020",
-				yearsOld: 1,
-				next5DaysForEvaluationReport: "27/11/2020",
-				next5DaysForFollowup: "20/12/2020",
-				fullName: "eefefeijefij  morales ornelas"
-			},
-			{
-				userId: 10,
-				therapistId: 1,
-				firstName: "eefefeijefij",
-				secondName: "",
-				paternalSurname: "morales",
-				maternalSurname: "ornelas",
-				education: "1er Año de Preescolar",
-				sex: "Hombre",
-				birthday: "12/02/1996",
-				addedDate: "19/10/2020 22:13:51",
-				imageUrl: null,
-				notes: '{"contents": ""}',
-				nextFollowup: "15/12/2020",
-				nextEvaluationReport: "22/11/2020",
-				yearsOld: 1,
-				next5DaysForEvaluationReport: "27/11/2020",
-				next5DaysForFollowup: "20/12/2020",
-				fullName: "eefefeijefij  morales ornelas"
-			}
-		];
-		setUsers(addDateObjectsTo(usersService2));*/
 	}, []);
 
 	//form data
@@ -354,6 +130,11 @@ const Users = ({ history }) => {
 	const [currentYearsOld, setCurrentYearsOld] = useState([0, 100]);
 	const [currentNextFollowup, setCurrentNextFollowup] = useState(null);
 	const [deleteLoading, setDeleteLoading] = useState(false);
+
+	if (!therapistInfo) {
+		history.push("/login");
+		return <></>;
+	}
 
 	//methods
 
@@ -594,6 +375,7 @@ const Users = ({ history }) => {
 							setSelectedUser={setSelectedUser}
 							toastRef={toastRef}
 							fromScreen="users"
+							setUsingDatesAndNotes={setUsingDatesAndNotes}
 						/>
 					</Tab>
 				</Tabs>

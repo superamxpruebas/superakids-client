@@ -44,9 +44,6 @@ import {
 	accountState,
 	updateRolesBool,
 	roleIds,
-	createdDate,
-	addedDate,
-	users,
 	sex,
 	lastSession,
 	isAdmin,
@@ -108,16 +105,10 @@ const Therapists = ({ history }) => {
 	const { therapistInfo } = useSelector((state) => state.therapistLogin);
 	const { loadingTherapists, therapists } = useSelector((state) => state.therapists);
 
-	if (!therapistInfo) {
-		history.push("/login");
-	}
-	if (!therapistInfo.isAdmin) {
-		history.push("/");
-		//aqui despues - si muestro un mensaje/toast en dashboard jeje
-	}
-
 	useEffect(() => {
-		if (therapists.length === 0) dispatch(getTherapistsList(toastRef));
+		if (therapistInfo) {
+			if (therapists.length === 0) dispatch(getTherapistsList(toastRef));
+		}
 		// eslint-disable-next-line
 	}, []);
 
@@ -153,10 +144,6 @@ const Therapists = ({ history }) => {
 	const [selectedTherapist, setSelectedTherapist] = useState(null);
 	const [selectedDeleteTherapist, setSelectedDeleteTherapist] = useState(null);
 	const [deleteTherapistContinue, setDeleteTherapistContinue] = useState(false);
-	const [selectedEducation, setSelectedEducation] = useState(null);
-	const [selectedSex, setSelectedSex] = useState(null);
-	const [currentFullName, setCurrentFullName] = useState("");
-	const [currentNextFollowup, setCurrentNextFollowup] = useState(null);
 	const [selectedUser, setSelectedUser] = useState(null);
 	const [usingUser, setUsingUser] = useState(null);
 	const [usingDatesAndNotes, setUsingDatesAndNotes] = useState(null);
@@ -167,6 +154,16 @@ const Therapists = ({ history }) => {
 	const createMessageRef = useRef(null);
 	const [deleteTherapistsList, setDeleteTherapistsList] = useState([]);
 	const [loadingDeleteTherapist, setLoadingDeleteTherapist] = useState(false);
+
+	if (!therapistInfo) {
+		history.push("/login");
+		return <></>;
+	}
+	if (!therapistInfo.isAdmin) {
+		history.push("/");
+		return <></>;
+		//aqui despues - si muestro un mensaje/toast en dashboard
+	}
 
 	// methods
 
@@ -460,6 +457,7 @@ const Therapists = ({ history }) => {
 								therapistId={selectedTherapist.therapistId}
 								setSelectedTherapist={setSelectedTherapist}
 								fromScreen="therapists"
+								setUsingDatesAndNotes={setUsingDatesAndNotes}
 							/>
 						</Tab>
 					</Tabs>

@@ -6,7 +6,11 @@ import { Column } from "primereact/column";
 import { ScrollPanel } from "primereact/scrollpanel";
 import SKModal from "./SKModal";
 import TherapistForm from "../forms/TherapistForm";
-import { stringArrayToPRSelectObjects } from "../helpers/Functions";
+import {
+	stringArrayToPRSelectObjects,
+	parseDateTime,
+	dateTimeToString
+} from "../helpers/Functions";
 import { defaultImageWhenEmpty } from "../helpers/Functions";
 import { useDispatch } from "react-redux";
 import { logout } from "../actions/therapistActions";
@@ -53,11 +57,11 @@ const AccountDetails = ({ therapistInfo }) => {
 				<p style={{ marginBottom: "10px" }}>{loggedTherapist.email}</p>
 				<p style={{ marginBottom: "10px" }}>
 					Fecha de afilicación: <br /*aqui despues - importar desde Fields*/ />
-					{loggedTherapist.addedDate}
+					{dateTimeToString(parseDateTime(loggedTherapist.addedDate))}
 				</p>
 				<p style={{ marginBottom: "10px" }}>
 					Fecha de creación de cuenta: <br />
-					{loggedTherapist.createdDate}
+					{dateTimeToString(parseDateTime(loggedTherapist.createdDate))}
 				</p>
 			</div>
 			<Button
